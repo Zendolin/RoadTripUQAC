@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "705127847393",
+    "firebase_url": "https://roadtrip-planner-9a988.firebaseio.com",
+    "project_id": "roadtrip-planner-9a988",
+    "storage_bucket": "roadtrip-planner-9a988.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:705127847393:android:17693099ea681c836e6ea0",
+        "android_client_info": {
+          "package_name": "com.uqac.mobile.roadtripplanner"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "705127847393-bb9pe21gkpqk1cv2rav0qu57ihatmddf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.uqac.mobile.roadtripplanner",
+            "certificate_hash": "932356c633ad2152ff17be5905bb79d0be712583"
+          }
+        },
+        {
+          "client_id": "705127847393-15kf0bucp3hv0vmkhltnh1l21um5v9d8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAlHLoSvvbxKz5QLpBPvfO-86F_U_CRHho"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "705127847393-15kf0bucp3hv0vmkhltnh1l21um5v9d8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
