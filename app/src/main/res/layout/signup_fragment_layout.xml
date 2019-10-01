@@ -31,20 +31,21 @@
         android:autofillHints="" />
 
     <Button
-        android:id="@+id/buttonLogin"
+        android:id="@+id/buttonSignup"
         style="@style/Widget.AppCompat.Button.Borderless.Colored"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/colorTextLight"
-        android:background="@color/colorPrimary"
         android:layout_marginBottom="8dp"
-        android:text="Log In" />
+        android:background="@color/colorPrimary"
+        android:text="SIGNUP"
+        android:textColor="@color/colorTextLight" />
 
     <TextView
-        android:id="@+id/textNewAccount"
+        android:id="@+id/textGoBack"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="New Account ?"
         android:clickable="true"
+        android:text="Go Back"
         android:textAlignment="center" />
+
 </LinearLayout>

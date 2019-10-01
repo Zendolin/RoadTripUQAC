@@ -1,7 +1,6 @@
 package com.uqac.mobile.roadtripplanner;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,40 +8,42 @@ import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 
-public class LoginFragment extends Fragment{
+public class SignupFragment extends Fragment{
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.login_fragment_layout, container, false);
+        View view = inflater.inflate(R.layout.signup_fragment_layout, container, false);
 
-        android.widget.Button buttonLogin = (android.widget.Button)view.findViewById(R.id.buttonLogin);
-        buttonLogin.setOnClickListener(new View.OnClickListener() {
+        android.widget.Button buttonSignup = (android.widget.Button)view.findViewById(R.id.buttonSignup);
+        buttonSignup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onClickLogin(v);
+                OnClickSignUp(v);
             }
         });
 
-        TextView txt = (TextView)view.findViewById(R.id.textNewAccount);
+        TextView txt = (TextView)view.findViewById(R.id.textGoBack);
         txt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onClickNewAccount(v);
+                OnClickGoBack(v);
             }
         });
 
         return view;
     }
 
-    public void onClickNewAccount(View v)
+
+    public void OnClickGoBack(View v)
     {
         ((LoginActivity)getActivity()).changeFragment();
     }
 
-    public void onClickLogin(View v)
+    public void OnClickSignUp(View v)
     {
-        ((LoginActivity)getActivity()).login("login","mdp");
+        ((LoginActivity)getActivity()).signup("newLogin","mdp");
     }
+
 }
