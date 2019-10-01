@@ -5,12 +5,15 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 
 public class LoginFragment extends Fragment{
 
+    EditText loginField;
+    EditText passwordField;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -33,6 +36,8 @@ public class LoginFragment extends Fragment{
             }
         });
 
+        loginField = (EditText)view.findViewById(R.id.editTextLogin);
+        passwordField = (EditText)view.findViewById(R.id.editTextPassword);
         return view;
     }
 
@@ -43,6 +48,6 @@ public class LoginFragment extends Fragment{
 
     public void onClickLogin(View v)
     {
-        ((LoginActivity)getActivity()).login("login","mdp");
+        ((LoginActivity)getActivity()).login(loginField.getText().toString(),passwordField.getText().toString());
     }
 }
