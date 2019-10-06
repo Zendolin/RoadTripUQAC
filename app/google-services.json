@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "705127847393-mv66n7embboqr99t7hhqbs328h8bnhi5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.uqac.mobile.roadtripplanner",
+            "certificate_hash": "15846d2b926410bf39e42bae1a9b6317293d3fc4"
+          }
+        },
+        {
           "client_id": "705127847393-bb9pe21gkpqk1cv2rav0qu57ihatmddf.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

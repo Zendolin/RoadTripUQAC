@@ -20,7 +20,7 @@ public class LoginFragment extends Fragment{
 
         View view = inflater.inflate(R.layout.login_fragment_layout, container, false);
 
-        android.widget.Button buttonLogin = (android.widget.Button)view.findViewById(R.id.buttonLogin);
+        android.widget.Button buttonLogin = view.findViewById(R.id.buttonLogin);
         buttonLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
