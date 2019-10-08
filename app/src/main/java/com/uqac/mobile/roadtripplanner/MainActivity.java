@@ -1,6 +1,9 @@
 package com.uqac.mobile.roadtripplanner;
 
+import android.content.Intent;
 import android.os.Bundle;
+
+import com.google.firebase.auth.FirebaseAuth;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
@@ -36,5 +39,12 @@ public class MainActivity extends AppCompatActivity {
             transaction.replace(R.id.ContentLayout,new ProfileFragment(),"Profile_FRAGMENT");
             transaction.commit();
         }
+    }
+
+    public void exit()
+    {
+        FirebaseAuth.getInstance().signOut();
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
     }
 }

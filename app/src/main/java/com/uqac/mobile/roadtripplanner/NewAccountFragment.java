@@ -9,7 +9,7 @@ import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 
-public class SignupFragment extends Fragment{
+public class NewAccountFragment extends Fragment{
 
     EditText loginField;
     EditText passwordField;
@@ -24,7 +24,7 @@ public class SignupFragment extends Fragment{
         buttonSignup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                OnClickSignUp(v);
+                onClickNewAccount(v);
             }
         });
 
@@ -32,24 +32,24 @@ public class SignupFragment extends Fragment{
         txt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                OnClickGoBack(v);
+                onClickGoBack(v);
             }
         });
 
-        loginField = (EditText)view.findViewById(R.id.editTextLogin);
-        passwordField = (EditText)view.findViewById(R.id.editTextPassword);
+        loginField = (EditText)view.findViewById(R.id.editTextEmailSignup);
+        passwordField = (EditText)view.findViewById(R.id.editTextPasswordSignup);
         return view;
     }
 
 
-    public void OnClickGoBack(View v)
+    public void onClickGoBack(View v)
     {
         ((LoginActivity)getActivity()).changeFragment();
     }
 
-    public void OnClickSignUp(View v)
+    public void onClickNewAccount(View v)
     {
-        ((LoginActivity)getActivity()).signup(loginField.getText().toString(),passwordField.getText().toString());
+        ((LoginActivity)getActivity()).newAccount(loginField.getText().toString(),passwordField.getText().toString());
     }
 
 }

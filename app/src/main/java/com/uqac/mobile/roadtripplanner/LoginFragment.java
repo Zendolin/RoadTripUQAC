@@ -1,7 +1,6 @@
 package com.uqac.mobile.roadtripplanner;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,11 +19,11 @@ public class LoginFragment extends Fragment{
 
         View view = inflater.inflate(R.layout.login_fragment_layout, container, false);
 
-        android.widget.Button buttonLogin = view.findViewById(R.id.buttonLogin);
-        buttonLogin.setOnClickListener(new View.OnClickListener() {
+        android.widget.Button buttonSignUp = view.findViewById(R.id.buttonLogin);
+        buttonSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onClickLogin(v);
+                onClickSignUp(v);
             }
         });
 
@@ -36,8 +35,8 @@ public class LoginFragment extends Fragment{
             }
         });
 
-        loginField = (EditText)view.findViewById(R.id.editTextLogin);
-        passwordField = (EditText)view.findViewById(R.id.editTextPassword);
+        loginField = (EditText)view.findViewById(R.id.editTextEmailLogin);
+        passwordField = (EditText)view.findViewById(R.id.editTextPasswordLogin);
         return view;
     }
 
@@ -46,8 +45,8 @@ public class LoginFragment extends Fragment{
         ((LoginActivity)getActivity()).changeFragment();
     }
 
-    public void onClickLogin(View v)
+    public void onClickSignUp(View v)
     {
-        ((LoginActivity)getActivity()).login(loginField.getText().toString(),passwordField.getText().toString());
+        ((LoginActivity)getActivity()).signup(loginField.getText().toString(),passwordField.getText().toString());
     }
 }

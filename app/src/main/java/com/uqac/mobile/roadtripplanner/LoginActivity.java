@@ -1,9 +1,6 @@
 package com.uqac.mobile.roadtripplanner;
 
-import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -86,10 +83,10 @@ public class LoginActivity extends AppCompatActivity {
     {
         FragmentManager manager = getSupportFragmentManager();
         LoginFragment lf = (LoginFragment)manager.findFragmentByTag("LOGIN_FRAGMENT");
-        SignupFragment suf = (SignupFragment)manager.findFragmentByTag("SIGNUP_FRAGMENT");
+        NewAccountFragment suf = (NewAccountFragment)manager.findFragmentByTag("SIGNUP_FRAGMENT");
         if (lf != null && lf.isVisible()) {
             FragmentTransaction transaction = manager.beginTransaction();
-            transaction.replace(R.id.fragmentHolder,new SignupFragment(),"SIGNUP_FRAGMENT");
+            transaction.replace(R.id.fragmentHolder,new NewAccountFragment(),"SIGNUP_FRAGMENT");
             transaction.commit();
         }
         else if (suf != null && suf.isVisible()) {
@@ -140,7 +137,7 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    public void login(String login , String password)
+    public void signup(String login , String password)
     {
         Toast toast = Toast.makeText(getApplicationContext(), "login;"+login,Toast.LENGTH_LONG);
         toast.show();
@@ -199,12 +196,12 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
-    public void signup(String login , String password)
+    public void newAccount(String login , String password)
     {
         Toast toast = Toast.makeText(getApplicationContext(), "signup;"+login,Toast.LENGTH_LONG);
         toast.show();
         progressBar.setVisibility(View.VISIBLE);
-        firebase.signInWithEmailAndPassword(login,password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+        firebase.createUserWithEmailAndPassword(login,password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 progressBar.setVisibility(View.GONE);

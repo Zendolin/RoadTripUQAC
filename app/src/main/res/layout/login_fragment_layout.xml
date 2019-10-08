@@ -9,9 +9,8 @@
     android:paddingStart="20dp"
     android:paddingEnd="20dp">
 
-
     <EditText
-        android:id="@+id/editTextLogin"
+        android:id="@+id/editTextEmailLogin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="35dp"
@@ -21,7 +20,7 @@
         android:autofillHints="" />
 
     <EditText
-        android:id="@+id/editTextPassword"
+        android:id="@+id/editTextPasswordLogin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="35dp"
