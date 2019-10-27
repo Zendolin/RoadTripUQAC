@@ -123,8 +123,6 @@ public class LoginActivity extends AppCompatActivity {
     private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
         try {
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
-            Toast toast = Toast.makeText(getApplicationContext(), "signupGoogle: "+account,Toast.LENGTH_LONG);
-            toast.show();
             signup(account);
 
         } catch (ApiException e) {
@@ -180,8 +178,6 @@ public class LoginActivity extends AppCompatActivity {
                     progressBar.setVisibility(View.GONE);
                     if(task.isSuccessful())
                     {
-                        Toast toast = Toast.makeText(getApplicationContext(), "SignUp Google Complete!",Toast.LENGTH_LONG);
-                        toast.show();
                         ChangeActivity();
                     }
                     else
@@ -207,24 +203,16 @@ public class LoginActivity extends AppCompatActivity {
                 progressBar.setVisibility(View.GONE);
                 if(task.isSuccessful())
                 {
-                    Toast toast = Toast.makeText(getApplicationContext(), "SignUp Complete!",Toast.LENGTH_LONG);
-                    toast.show();
                     ChangeActivity();
                 }
                 else
                 {
-                    Log.w(TAG, "signInWithCustomToken:failure", task.getException());
+                    Log.e(TAG, "signInWithCustomToken:failure", task.getException());
                     Toast toast = Toast.makeText(getApplicationContext(), "Error Signup",Toast.LENGTH_LONG);
                     toast.show();
                 }
             }
         });
-    }
-
-    public void SkipLogin(View v)
-    {
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
     }
 
     public void ChangeActivity()

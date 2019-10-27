@@ -82,13 +82,12 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textOr" />
 
-        <Button
-            android:id="@+id/buttonDebug"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
-            android:onClick="SkipLogin"
-            android:text="( Debug ) Skip Login"
+        <com.facebook.login.widget.LoginButton
+            android:id="@+id/login_buttonFacebook"
+            android:layout_width="190dp"
+            android:layout_height="27dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="28dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/sign_in_button" />
