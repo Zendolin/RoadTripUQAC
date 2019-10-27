@@ -3,11 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical">
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintStart_toStartOf="parent"
@@ -58,7 +59,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"
                         android:layout_marginRight="6dp"
-                        android:text="John"
+                        android:text="firstName"
                         android:textStyle="bold" />
 
                     <TextView
@@ -67,7 +68,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"
                         android:layout_weight="1"
-                        android:text="Doe"
+                        android:text="LastName"
                         android:textStyle="bold" />
 
                 </LinearLayout>
@@ -84,7 +85,7 @@
                     android:layout_width="176dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:text="27/01/1997" />
+                    android:text="birthdate not set" />
             </LinearLayout>
 
             <ImageView
@@ -165,4 +166,45 @@
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <View
+        android:id="@+id/view2"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:background="@color/colorTextMedium"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout"
+        app:layout_constraintWidth_percent="0.35" />
+
+    <TextView
+        android:id="@+id/TextMyTrips"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:text="My Trips"
+        android:textColor="@color/colorTextDark"
+        app:layout_constraintEnd_toStartOf="@+id/view"
+        app:layout_constraintStart_toEndOf="@+id/view2"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout" />
+
+    <View
+        android:id="@+id/view"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="15dp"
+        android:background="@color/colorTextMedium"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout"
+        app:layout_constraintWidth_percent="0.35" />
+
+    <ScrollView
+        android:layout_width="405dp"
+        android:layout_height="419dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/TextMyTrips">
+        <!-- Here you put the rest of your current view-->
+    </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

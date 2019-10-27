@@ -158,14 +158,12 @@ public class ProfileFragment extends Fragment {
         {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                //for(DataSnapshot datas: dataSnapshot.getChildren()){
-                    if(dataSnapshot.child("email").getValue() != null)
-                    {
+
                         Log.d(TAG,"-----user found : "+ dataSnapshot.child("email").getValue().toString()+" ------");
-                        profile.email = dataSnapshot.child("email").getValue().toString();
-                        profile.lastName =dataSnapshot.child("lastname").getValue().toString();
-                        profile.firstName =dataSnapshot.child("firstname").getValue().toString();
-                        profile.birthDate =dataSnapshot.child("birthdate").getValue().toString();
+                        if(dataSnapshot.child("email").getValue() != null) profile.email = dataSnapshot.child("email").getValue().toString();
+                        if(dataSnapshot.child("lastName").getValue() != null)profile.lastName =dataSnapshot.child("lastname").getValue().toString();
+                        if(dataSnapshot.child("firstName").getValue() != null) profile.firstName =dataSnapshot.child("firstname").getValue().toString();
+                        if(dataSnapshot.child("birthDate").getValue() != null)profile.birthDate =dataSnapshot.child("birthdate").getValue().toString();
 
                         if(profile.profilePicture != null)
                         {
@@ -198,8 +196,6 @@ public class ProfileFragment extends Fragment {
                             }
 
                         }
-                  //  }
-                }
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
@@ -265,7 +261,8 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 if (!snapshot.hasChild(profile.uid)) {
-                    reference.setValue(profile.uid);
+
+                    //reference.setValue(profile.uid);
                     final DatabaseReference referenceUID = reference.child(profile.uid);
                     Log.d(TAG,"-----creating new UID-----");
                     Map<String, Object> userData = new HashMap<String, Object>();
