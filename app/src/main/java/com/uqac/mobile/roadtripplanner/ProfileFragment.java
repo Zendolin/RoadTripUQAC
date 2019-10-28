@@ -31,17 +31,21 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 public class ProfileFragment extends Fragment {
 
     private static String TAG = "----------RoadTrip Planner-------------";
     private static final int REQUEST_CODE = 1;
+    private File localFile = null;
 
     private View view;
     private MainActivity mainActivity;
@@ -53,7 +57,6 @@ public class ProfileFragment extends Fragment {
     private TextView textBirthDate;
     private Bitmap bitmap;
 
-
     private ConstraintLayout layoutProfileInfo;
     private ConstraintLayout layoutProfileEdit;
     private ImageView imageProfileCheck;
@@ -62,8 +65,7 @@ public class ProfileFragment extends Fragment {
     private EditText editProfileLastname;
     private EditText editProfileBirthdate;
 
-
-    private File localFile = null;
+    private ArrayList<MyTrip> listTrips = new ArrayList<>();
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
@@ -152,22 +154,28 @@ public class ProfileFragment extends Fragment {
     }
 
     private void getProfileData() {
-        Log.d(TAG, "-----fetching user informations of :  " + this.profile.uid + "   ------");
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("users");
-        reference.child(this.profile.uid).addValueEventListener(new ValueEventListener() {
+        Log.d(TAG, "-----fetching user informations of :  " + profile.uid + "   ------");
+        final DatabaseReference reference = FirebaseDatabase.getInstance().getReference("users");
+        reference.child(profile.uid).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                Map<String, Object> userData = new HashMap<String, Object>();
+
                 Log.d(TAG, "-----data found !------");
                 if (dataSnapshot.child("email").getValue() != null)
                     profile.email = dataSnapshot.child("email").getValue().toString();
                 if (dataSnapshot.child("lastname").getValue() != null)
                     profile.lastName = dataSnapshot.child("lastname").getValue().toString();
+                else userData.put("lastname", "LastName");
                 if (dataSnapshot.child("firstname").getValue() != null)
                     profile.firstName = dataSnapshot.child("firstname").getValue().toString();
+                else userData.put("firstname", "FirstName");
                 if (dataSnapshot.child("birthdate").getValue() != null)
                     profile.birthDate = dataSnapshot.child("birthdate").getValue().toString();
-                if (dataSnapshot.child("countSavedPoints").getValue() != null)
-                    profile.countSavedPoints = dataSnapshot.child("countSavedPoints").getValue().toString();
+                else userData.put("birthdate", "birthdate not set");
+                if (dataSnapshot.child("countsavedpoints").getValue() != null)
+                    profile.countSavedPoints = dataSnapshot.child("countsavedpoints").getValue().toString();
+                else userData.put("countsavedpoints", "0");
                 if (profile.profilePicture != null) {
                     image.setImageBitmap(profile.profilePicture);
                 }
@@ -195,8 +203,9 @@ public class ProfileFragment extends Fragment {
                 if(profile != null)
                 {
                     updateProfile();
+                    listMyTrips();
                 }
-
+                if(!userData.isEmpty()) reference.child(profile.uid).updateChildren(userData);
             }
 
             @Override
@@ -208,16 +217,8 @@ public class ProfileFragment extends Fragment {
 
     private void updateProfile()
     {
-        /*
-                    if(((MainActivity) getActivity()) == null)
-                    {
-                    Log.e(TAG,"----Main activity NULL !");
-                    }
-                    else if (((MainActivity) getActivity()).profile == null)
-                    {
-                        Log.e(TAG,"----profile NULL !");
-                    }*/
         mainActivity.profile = profile;
+        Log.d(TAG,"---profile set to Main  activity , count : " + mainActivity.profile.countSavedPoints+" ---");
     }
     private void getProfilePicture() {
         StorageReference pathReference = profile.storage.child("images/ProfilePicture_" + profile.uid + ".jpg");
@@ -301,7 +302,7 @@ public class ProfileFragment extends Fragment {
                     userData.put("firstname", profile.firstName);
                     userData.put("lastname", profile.lastName);
                     userData.put("birthdate", "birthdate not set");
-                    userData.put("countSavedPoints", "0");
+                    userData.put("countsavedpoints", "0");
                     referenceUID.updateChildren(userData);
                     ((MainActivity) getActivity()).profile = profile;
                 } else {
@@ -317,6 +318,44 @@ public class ProfileFragment extends Fragment {
     }
 
     private void listMyTrips() {
+        if(!isAdded()) return;
+        for (Fragment fragment : getChildFragmentManager().getFragments()) {
+                if(!fragment.isAdded()) return;
+                if (fragment != null) {
+                getChildFragmentManager().beginTransaction().remove(fragment).commit();
+            }
+        }
+        final DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("users").child(this.profile.uid).child("saved_points");
+        reference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    MyTripSquareFragment frag = new MyTripSquareFragment();
+                    FragmentManager manager = getChildFragmentManager();
+                    FragmentTransaction transaction = manager.beginTransaction();
+                    transaction.add(R.id.myTripSquareFragment_holder,frag,"MyTripSquare_FRAGMENT");
+                    transaction.commit();
+                    manager.executePendingTransactions();
+
+                    String latitude ="";
+                    String longitude ="";
+                    String tripName ="";
+
+                    if (snapshot.child("tripname").getValue() != null)
+                        tripName= snapshot.child("tripname").getValue().toString();
+                    if (snapshot.child("latitude").getValue() != null)
+                        latitude= snapshot.child("latitude").getValue().toString();
+                    if (snapshot.child("longitude").getValue() != null)
+                        longitude= snapshot.child("longitude").getValue().toString();
+
+                    MyTrip mytrip = new  MyTrip(profile.uid,tripName,longitude,latitude);
+                    frag.initMap(mytrip);
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
 
     }
 

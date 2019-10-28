@@ -1,22 +1,22 @@
 package com.uqac.mobile.roadtripplanner;
 
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.storage.StorageReference;
 
 public class MyTrip {
     private static String TAG = "----------RoadTrip Planner-------------";
-    public FirebaseUser user;
     public String ownerUID;
+    //public String idTrip;
     public String tripName;
+    public String longitude;
+    public String latitude;
     public String likeCount;
-    public String mainLocation;
 
-    MyTrip(FirebaseUser user,String tripName,String mainLocation)
+    MyTrip(String uid,String tripName,String longitude,String latitude)
     {
-        this.user = user;
-        this.ownerUID = user.getUid();
+        this.ownerUID = uid;
         this.tripName = tripName;
+        this.longitude = longitude;
+        this.latitude = latitude;
         this.likeCount = Integer.toString(0);
-        this.mainLocation = mainLocation;
     }
 }

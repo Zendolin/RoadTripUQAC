@@ -71,11 +71,10 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-
         //fragments init
         FragmentManager manager = getSupportFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
-        transaction.add(R.id.fragmentHolder,new LoginFragment(),"LOGIN_FRAGMENT");
+        transaction.replace(R.id.fragmentHolder,new LoginFragment(),"LOGIN_FRAGMENT");
         transaction.commit();
     }
 

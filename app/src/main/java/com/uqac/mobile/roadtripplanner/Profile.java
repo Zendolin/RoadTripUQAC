@@ -24,7 +24,7 @@ public class Profile {
     public String firstName;
     public String birthDate;
     public Bitmap profilePicture;
-    public String countSavedPoints ="0";
+    public String countSavedPoints = "";
 
     Profile(){};
     Profile(StorageReference storage, FirebaseUser user)

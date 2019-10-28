@@ -24,14 +24,18 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AutoCompleteTextView;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.uqac.mobile.roadtripplanner.Adapters.PlacesAdapter;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -108,7 +112,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
             }
         });
 
-
+        getProfileData();
         imageDelete = view.findViewById(R.id.image_map_deletePoint);
         imageDelete.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -131,12 +135,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
         if(!Places.isInitialized()){
             Places.initialize(getActivity().getApplicationContext(), apiKey);
         }
-
+        profile  = new Profile();
         placesClient = Places.createClient(this.getActivity().getApplicationContext());
-        profile = new Profile();
         searchText = view.findViewById(R.id.input_search);
         gps = view.findViewById(R.id.ic_gps);
-        profile = ((MainActivity)getActivity()).profile;
+
         getLocationPermission();
         /*final AutocompleteSupportFragment autocompleteSupportFragment = (AutocompleteSupportFragment) getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment);
 
@@ -406,25 +409,59 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
     {
         if(point != null)
         {
-            FirebaseUser userFireBase = FirebaseAuth.getInstance().getCurrentUser();
-            DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("users").child(userFireBase.getUid()).child("saved_points").child("point_"+profile.countSavedPoints);
-            Map<String,Object> map = new HashMap<String, Object>();
-            map.put("Latitude", point.latitude);
-            map.put("Longitude",point.longitude);
-            reference.updateChildren(map);
-            reference = FirebaseDatabase.getInstance().getReference().child("users").child(userFireBase.getUid());
-            int count = Integer.parseInt(profile.countSavedPoints);
-            count += 1;
-            profile.countSavedPoints =""+count;
-            map = new HashMap<String, Object>();
-            map.put("countSavedPoints",profile.countSavedPoints);
-            reference.updateChildren(map);
+            AlertDialog.Builder alertDiag = new AlertDialog.Builder(getActivity());
+            final EditText edittext = new EditText(getActivity());
+            alertDiag.setMessage("Choose a name for your trip");
+            alertDiag.setTitle("Save a Trip");
 
-            Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Location saved !",Toast.LENGTH_LONG);
-            toast.show();
+            alertDiag.setView(edittext);
 
+            alertDiag.setPositiveButton("Save", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    if(!profile.countSavedPoints.isEmpty()) {
+                        try {
+                            FirebaseUser userFireBase = FirebaseAuth.getInstance().getCurrentUser();
+                            DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("users").child(userFireBase.getUid()).child("saved_points").child("point_" + profile.countSavedPoints);
 
-        }
+                            Log.d(TAG, "---------current count : " + profile.countSavedPoints + "-------");
+                            Map<String, Object> map = new HashMap<String, Object>();
+                            map.put("latitude", point.latitude);
+                            map.put("longitude", point.longitude);
+                            if (edittext.getText() != null)
+                                map.put("tripname", edittext.getText().toString());
+                            reference.updateChildren(map);
+
+                            reference = FirebaseDatabase.getInstance().getReference().child("users").child(userFireBase.getUid());
+                            int count = Integer.parseInt(profile.countSavedPoints);
+                            count += 1;
+                            profile.countSavedPoints = "" + count;
+                            Log.d(TAG, "---------next count : " + profile.countSavedPoints + "-------");
+                            map = new HashMap<String, Object>();
+                            map.put("countsavedpoints", profile.countSavedPoints);
+                            reference.updateChildren(map);
+
+                            Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Location saved !", Toast.LENGTH_LONG);
+                            toast.show();
+                        } catch (Exception e) {
+                            Toast toast = Toast.makeText(getActivity().getApplicationContext(), "An error occured...", Toast.LENGTH_LONG);
+                            Log.d(TAG,"---------------Error saving Point-------");
+                            toast.show();
+                            e.printStackTrace();
+                        }
+                    }
+                    else Log.d(TAG,"---------------countSavedPoints is empty-------");
+
+                }
+            });
+            alertDiag.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    // User cancelled the dialog
+                }
+            });
+
+            AlertDialog dialog = alertDiag.create();
+            dialog.show();
+        } else Log.d(TAG,"---------------Saved point is null-------");
     }
 
     @Override
@@ -515,4 +552,28 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
         });
     }
 
+    private void getProfileData() {
+        final DatabaseReference reference = FirebaseDatabase.getInstance().getReference("users");
+        reference.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Log.d(TAG, "-----data found !------");
+                if (dataSnapshot.child("email").getValue() != null)
+                    profile.email = dataSnapshot.child("email").getValue().toString();
+                if (dataSnapshot.child("lastname").getValue() != null)
+                    profile.lastName = dataSnapshot.child("lastname").getValue().toString();
+                if (dataSnapshot.child("firstname").getValue() != null)
+                    profile.firstName = dataSnapshot.child("firstname").getValue().toString();
+                if (dataSnapshot.child("birthdate").getValue() != null)
+                    profile.birthDate = dataSnapshot.child("birthdate").getValue().toString();
+                if (dataSnapshot.child("countsavedpoints").getValue() != null)
+                    profile.countSavedPoints = dataSnapshot.child("countsavedpoints").getValue().toString();
+                Log.d(TAG, "---Profile get  , count : " + profile.countSavedPoints+"---");
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.d(TAG, "-----" + databaseError.getMessage() + "----");
+            }
+        });
+    }
 }

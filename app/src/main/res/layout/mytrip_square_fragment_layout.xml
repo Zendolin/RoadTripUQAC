@@ -13,7 +13,7 @@
         android:layout_height="wrap_content">
 
         <TextView
-            android:id="@+id/MyTripSquare_TripName"
+            android:id="@+id/myTripSquare_TripName"
             android:layout_width="240dp"
             android:layout_height="27dp"
             android:layout_marginTop="8dp"
@@ -24,17 +24,17 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/MyTripSquare_LikeScore"
+            android:id="@+id/myTripSquare_LikeScore"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="2dp"
             android:text="0"
-            app:layout_constraintEnd_toStartOf="@+id/imageButton2"
+            app:layout_constraintEnd_toStartOf="@+id/myTripSquare_LikeImage"
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageButton
-            android:id="@+id/imageButton2"
+            android:id="@+id/myTripSquare_LikeImage"
             android:layout_width="26dp"
             android:layout_height="26dp"
             android:layout_marginTop="6dp"
@@ -47,9 +47,8 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <fragment
-        android:id="@+id/map"
+        android:id="@+id/mapFragment"
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
-        android:layout_height="136dp"
-        tools:context=".MapsActivity" />
+        android:layout_height="136dp" />
 </LinearLayout>
