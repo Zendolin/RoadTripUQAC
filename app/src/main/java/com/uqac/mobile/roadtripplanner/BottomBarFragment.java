@@ -127,7 +127,7 @@ public class BottomBarFragment extends Fragment {
 
     private void clickPlanATrip()
     {
-        ((MainActivity)getActivity()).changeFragment("PlanATripFragments");
+        ((MainActivity)getActivity()).changeFragment("MapFragment");
     }
     private void clickChat()
     {

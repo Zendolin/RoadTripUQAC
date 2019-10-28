@@ -2,6 +2,7 @@ package com.uqac.mobile.roadtripplanner;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -12,7 +13,7 @@ import androidx.fragment.app.FragmentTransaction;
 public class MainActivity extends AppCompatActivity {
 
     static String TAG = "----------RoadTrip Planner-------------";
-
+    public Profile profile;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,14 +30,25 @@ public class MainActivity extends AppCompatActivity {
 
     public void changeFragment(String fragment)
     {
+        profile = new Profile();
+        Log.d(TAG,"------changing fragment to : " + fragment + "-------");
         FragmentManager manager = getSupportFragmentManager();
 
-        ProfileFragment pf = (ProfileFragment) manager.findFragmentByTag("Profile_FRAGMENT");
+        //ProfileFragment pf = (ProfileFragment) manager.findFragmentByTag("Profile_FRAGMENT");
+        //MapFragment mapF = (MapFragment) manager.findFragmentByTag("Map_FRAGMENT");
 
-        if(fragment.equals("ProfileFragment") && pf != null && !pf.isVisible())
+        if(fragment.equals("ProfileFragment"))
         {
             FragmentTransaction transaction = manager.beginTransaction();
             transaction.replace(R.id.ContentLayout,new ProfileFragment(),"Profile_FRAGMENT");
+            transaction.commit();
+        }
+
+        if(fragment.equals("MapFragment"))
+        {
+            Log.d(TAG,"------fragment changed! " + fragment + "-------");
+            FragmentTransaction transaction = manager.beginTransaction();
+            transaction.replace(R.id.ContentLayout,new MapFragment(),"Map_FRAGMENT");
             transaction.commit();
         }
     }

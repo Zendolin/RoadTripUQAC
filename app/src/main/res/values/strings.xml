@@ -3,4 +3,7 @@
     <string name="title_activity_maps">Map</string>
     <string name="facebook_app_id">737398606734546</string>
     <string name="fb_login_protocol_scheme">fb737398606734546</string>
+    <string name="title_activity_places">Places</string>
+    <string name="title_activity_roads">Roads</string>
+    <string name="get_direction">Get direction</string>
 </resources>

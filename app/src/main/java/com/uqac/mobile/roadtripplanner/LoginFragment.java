@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 
@@ -47,6 +48,15 @@ public class LoginFragment extends Fragment{
 
     public void onClickSignUp(View v)
     {
-        ((LoginActivity)getActivity()).signup(loginField.getText().toString(),passwordField.getText().toString());
+        if(loginField.getText() != null && passwordField.getText() != null)
+        {
+            ((LoginActivity)getActivity()).signup(loginField.getText().toString(),passwordField.getText().toString());
+
+        }
+        else
+        {
+            Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Error , please fill the inputs !",Toast.LENGTH_LONG);
+            toast.show();
+        }
     }
 }
