@@ -25,7 +25,6 @@ public class Profile {
     public String birthDate;
     public Bitmap profilePicture;
 
-
     Profile(StorageReference storage, FirebaseUser user)
     {
         if(user!= null)

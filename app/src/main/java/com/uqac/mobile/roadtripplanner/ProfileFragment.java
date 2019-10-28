@@ -5,13 +5,14 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -34,6 +35,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 
 public class ProfileFragment extends Fragment {
@@ -44,11 +46,21 @@ public class ProfileFragment extends Fragment {
     private View view;
     private Profile profile;
     private ImageView image;
-    private TextView email;
-    private TextView firstname;
-    private TextView lastname;
-    private TextView birthDate;
+    private TextView textEmail;
+    private TextView textFirstName;
+    private TextView textLastname;
+    private TextView textBirthDate;
     private Bitmap bitmap;
+
+
+    private ConstraintLayout layoutProfileInfo;
+    private ConstraintLayout layoutProfileEdit;
+    private ImageView imageProfileCheck;
+    private ImageView imageProfileEdit;
+    private EditText editProfileFirstname;
+    private EditText editProfileLastname;
+    private EditText editProfileBirthdate;
+
 
     private File localFile = null;
 
@@ -59,10 +71,31 @@ public class ProfileFragment extends Fragment {
         TextView txtLogout = view.findViewById(R.id.textLogout);
 
         image = view.findViewById(R.id.profile_imageViewProfile);
-        email = view.findViewById(R.id.profile_textEmail);
-        birthDate = view.findViewById(R.id.profile_textDate);
-        firstname = view.findViewById(R.id.profile_textFirstName);
-        lastname = view.findViewById(R.id.profile_textLastName);
+        textEmail = view.findViewById(R.id.profile_textEmail);
+        textBirthDate = view.findViewById(R.id.profile_textDate);
+        textFirstName = view.findViewById(R.id.profile_textFirstName);
+        textLastname = view.findViewById(R.id.profile_textLastName);
+
+        layoutProfileInfo = view.findViewById(R.id.LayoutProfile);
+        layoutProfileEdit = view.findViewById(R.id.LayoutEditProfile);
+        imageProfileEdit = view.findViewById(R.id.imageViewEditProfile);
+        imageProfileEdit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showProfileEditLayout(true);
+            }
+        });
+        imageProfileCheck = view.findViewById(R.id.imageViewProfileCheck);
+        imageProfileCheck.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showProfileEditLayout(false);
+            }
+        });
+        editProfileBirthdate = view.findViewById(R.id.profile_editBrithdate);
+        editProfileLastname = view.findViewById(R.id.profile_editLastname);
+        editProfileFirstname = view.findViewById(R.id.profile_editFirstname);
+
 
         FirebaseUser userFireBase = FirebaseAuth.getInstance().getCurrentUser();
         StorageReference storageRef = FirebaseStorage.getInstance().getReference();
@@ -125,14 +158,11 @@ public class ProfileFragment extends Fragment {
         {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                //for(DataSnapshot datas: dataSnapshot.getChildren()){
-                    if(dataSnapshot.child("email").getValue() != null)
-                    {
-                        Log.d(TAG,"-----user found : "+ dataSnapshot.child("email").getValue().toString()+" ------");
-                        profile.email = dataSnapshot.child("email").getValue().toString();
-                        profile.lastName =dataSnapshot.child("lastname").getValue().toString();
-                        profile.firstName =dataSnapshot.child("firstname").getValue().toString();
-                        profile.birthDate =dataSnapshot.child("birthdate").getValue().toString();
+                         Log.d(TAG,"-----data found !------");
+                        if(dataSnapshot.child("email").getValue() != null) profile.email = dataSnapshot.child("email").getValue().toString();
+                        if(dataSnapshot.child("lastname").getValue() != null)profile.lastName =dataSnapshot.child("lastname").getValue().toString();
+                        if(dataSnapshot.child("firstname").getValue() != null) profile.firstName =dataSnapshot.child("firstname").getValue().toString();
+                        if(dataSnapshot.child("birthdate").getValue() != null)profile.birthDate =dataSnapshot.child("birthdate").getValue().toString();
 
                         if(profile.profilePicture != null)
                         {
@@ -140,16 +170,16 @@ public class ProfileFragment extends Fragment {
                         }
                         if(profile.email != null)
                         {
-                            email.setText(profile.email);
+                            textEmail.setText(profile.email);
                         }
                         if(profile.birthDate != null)
                         {
-                            birthDate.setText((profile.birthDate));
+                            textBirthDate.setText((profile.birthDate));
                         }
                         if(profile.firstName != null && profile.lastName != null)
                         {
-                            firstname.setText((profile.firstName));
-                            lastname.setText((profile.lastName));
+                            textFirstName.setText((profile.firstName));
+                            textLastname.setText((profile.lastName));
                         }
                         else
                         {
@@ -158,15 +188,13 @@ public class ProfileFragment extends Fragment {
                             {
                                 fullName = fullName.replace("\n"," ");
                                 String[] parts = fullName.split("");
-                                firstname.setText(parts[0]);
                                 profile.firstName = parts[0];
                                 profile.lastName = parts[1];
-                                lastname.setText(parts[1]);
+                                textFirstName.setText(parts[0]);
+                                textLastname.setText(parts[1]);
                             }
 
                         }
-                  //  }
-                }
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
@@ -197,15 +225,44 @@ public class ProfileFragment extends Fragment {
         }
     }
 
-    private void setProfileData()
+    private void showProfileEditLayout(boolean b)
     {
-
+        if(b)
+        {
+            if(!TextUtils.isEmpty(profile.birthDate) && !profile.birthDate.equals("birthdate not set"))editProfileBirthdate.setText(profile.birthDate);
+            if(!TextUtils.isEmpty(profile.firstName))editProfileFirstname.setText(profile.firstName);
+            if(!TextUtils.isEmpty(profile.lastName))editProfileLastname.setText(profile.lastName);
+            layoutProfileInfo.setVisibility(View.GONE);
+            layoutProfileEdit.setVisibility(View.VISIBLE);
+        }
+        else
+        {
+            final DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("users").child(profile.uid);
+            Map<String, Object> userData = new HashMap<String, Object>();
+            if(editProfileBirthdate.getText() != null ) {
+                userData .put("birthdate", editProfileBirthdate.getText().toString());
+                profile.birthDate = editProfileBirthdate.getText().toString();
+                textBirthDate.setText(profile.birthDate);
+            }
+            if(editProfileFirstname.getText() != null ){
+                userData .put("firstname", editProfileFirstname.getText().toString());
+                profile.firstName = editProfileFirstname.getText().toString();
+                textFirstName.setText(profile.firstName);
+            }
+            if(editProfileLastname.getText() != null ){
+                userData .put("lastname", editProfileLastname.getText().toString());
+                profile.lastName = editProfileLastname.getText().toString();
+                textLastname.setText(profile.lastName);
+            }
+            reference.updateChildren(userData);
+            layoutProfileInfo.setVisibility(View.VISIBLE);
+            layoutProfileEdit.setVisibility(View.GONE);
+        }
     }
     public void updateNewImage(Bitmap b)
     {
         image.setImageBitmap(b);
     }
-
 
     private void checkNewUser()
     {
@@ -214,7 +271,8 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 if (!snapshot.hasChild(profile.uid)) {
-                    reference.setValue(profile.uid);
+
+                    //reference.setValue(profile.uid);
                     final DatabaseReference referenceUID = reference.child(profile.uid);
                     Log.d(TAG,"-----creating new UID-----");
                     Map<String, Object> userData = new HashMap<String, Object>();
@@ -227,9 +285,9 @@ public class ProfileFragment extends Fragment {
                         profile.firstName = parts[0];
                         profile.lastName = parts[1];
                     }
-                    userData.put("email", profile.email);
-                    userData.put("firstname", profile.firstName);
-                    userData.put("lastname", profile.lastName);
+                    userData.put("textEmail", profile.email);
+                    userData.put("textFirstName", profile.firstName);
+                    userData.put("textLastname", profile.lastName);
                     userData.put("birthdate", "birthdate not set");
                     referenceUID.updateChildren(userData);
                 }

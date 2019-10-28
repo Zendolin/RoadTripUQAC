@@ -105,17 +105,14 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
-        // Result returned from launching the Intent from GoogleSignInClient.getSignInIntent(...);
         if (requestCode == 1) {
-            // The Task returned from this call is always completed, no need to attach
-            // a listener.
+
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             handleSignInResult(task);
         }
         else
         {
-            Toast toast = Toast.makeText(getApplicationContext(), "ERROR Google Auth: ",Toast.LENGTH_LONG);
+            Toast toast = Toast.makeText(getApplicationContext(), "ERROR Google Auth",Toast.LENGTH_LONG);
             toast.show();
         }
     }
@@ -131,13 +128,13 @@ public class LoginActivity extends AppCompatActivity {
             Log.w(TAG, "signInResult:failed code=" + e.getStatusCode());
             Toast toast = Toast.makeText(getApplicationContext(), "ERROR Google:" + e.toString(),Toast.LENGTH_LONG);
             toast.show();
-            Log.d("TAG",e.toString());
+            Log.d("TAG","---------------"+e.toString());
         }
     }
 
     public void signup(String login , String password)
     {
-        Toast toast = Toast.makeText(getApplicationContext(), "login;"+login,Toast.LENGTH_LONG);
+        Toast toast = Toast.makeText(getApplicationContext(), "login as "+login,Toast.LENGTH_LONG);
         toast.show();
         progressBar.setVisibility(View.VISIBLE);
         firebase.signInWithEmailAndPassword(login,password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
@@ -194,7 +191,7 @@ public class LoginActivity extends AppCompatActivity {
 
     public void newAccount(String login , String password)
     {
-        Toast toast = Toast.makeText(getApplicationContext(), "signup;"+login,Toast.LENGTH_LONG);
+        Toast toast = Toast.makeText(getApplicationContext(), "signup as : "+login,Toast.LENGTH_LONG);
         toast.show();
         progressBar.setVisibility(View.VISIBLE);
         firebase.createUserWithEmailAndPassword(login,password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
@@ -207,7 +204,7 @@ public class LoginActivity extends AppCompatActivity {
                 }
                 else
                 {
-                    Log.e(TAG, "signInWithCustomToken:failure", task.getException());
+                    Log.e(TAG, "signInWithCustomToken:failure---------", task.getException());
                     Toast toast = Toast.makeText(getApplicationContext(), "Error Signup",Toast.LENGTH_LONG);
                     toast.show();
                 }
