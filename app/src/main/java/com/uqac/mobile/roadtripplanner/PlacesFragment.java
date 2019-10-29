@@ -1,18 +1,19 @@
 package com.uqac.mobile.roadtripplanner;
 
 import android.graphics.Bitmap;
-import android.nfc.Tag;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 
-import com.uqac.mobile.roadtripplanner.R;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -21,35 +22,36 @@ import com.google.android.libraries.places.api.model.PhotoMetadata;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.net.FetchPhotoRequest;
 import com.google.android.libraries.places.api.net.FetchPhotoResponse;
-import com.google.android.libraries.places.api.net.FetchPlaceRequest;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 
 import java.util.Arrays;
-import java.util.List;
 
-public class PlacesActivity extends AppCompatActivity {
+public class PlacesFragment extends Fragment {
 
     PlacesClient placesClient;
     ImageView imageView;
+    SupportMapFragment placesFragment;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_places);
+        final View view = inflater.inflate(R.layout.places_fragment_layout, container, false);
+       //setContentView(R.layout.places_fragment_layout);
 
         //ImageView imageView = (ImageView) findViewById(R.id.places_image);
 
         String apiKey = getString(R.string.google_api_key);
 
         if(!Places.isInitialized()){
-            Places.initialize(getApplicationContext(), apiKey);
+            Places.initialize(getActivity().getApplicationContext(), apiKey);
         }
 
-        placesClient = Places.createClient(this);
+        placesClient = Places.createClient(this.getActivity().getApplicationContext());
 
-        final AutocompleteSupportFragment autocompleteSupportFragment = (AutocompleteSupportFragment) getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment);
+
+        final AutocompleteSupportFragment autocompleteSupportFragment = (AutocompleteSupportFragment) getChildFragmentManager().findFragmentById(R.id.autocomplete_fragment);
 
         autocompleteSupportFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.LAT_LNG, Place.Field.NAME, Place.Field.PHOTO_METADATAS));
         autocompleteSupportFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
@@ -76,7 +78,7 @@ public class PlacesActivity extends AppCompatActivity {
                     @Override
                     public void onSuccess(FetchPhotoResponse fetchPhotoResponse) {
                         // temporaire
-                        ImageView imageView = (ImageView) findViewById(R.id.places_image);
+                        ImageView imageView = (ImageView) view.findViewById(R.id.places_image);
                         Bitmap bitmap = fetchPhotoResponse.getBitmap();
                         imageView.setImageBitmap(bitmap);
                     }
@@ -99,6 +101,6 @@ public class PlacesActivity extends AppCompatActivity {
 
             }
         });
-
+        return view;
     }
 }

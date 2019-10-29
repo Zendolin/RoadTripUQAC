@@ -25,6 +25,7 @@ import java.util.Set;
 
 public class DatePickerFragment extends Fragment {
     private CalendarPickerView calendar;
+    Button button_done ;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,6 +40,8 @@ public class DatePickerFragment extends Fragment {
         lastYear.add(Calendar.YEAR, -1);
 
         calendar = (CalendarPickerView) view.findViewById(R.id.calendar_view);
+        button_done = (Button) view.findViewById(R.id.done_button);
+
         calendar.init(lastYear.getTime(), nextYear.getTime()) //
                 .inMode(CalendarPickerView.SelectionMode.RANGE) //
                 .withSelectedDate(new Date());
@@ -57,6 +60,13 @@ public class DatePickerFragment extends Fragment {
             @Override
             public void onDateUnselected(Date date) {
 
+            }
+        });
+        button_done.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                PlacesFragment fragmentPlace = new PlacesFragment();
+                ((MainActivity)getActivity()).changeFragment(fragmentPlace, "fragmentPlace");
             }
         });
 
