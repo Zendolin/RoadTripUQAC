@@ -4,6 +4,8 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -24,6 +26,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AutoCompleteTextView;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -93,6 +96,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
     PlacesAdapter listOfDestinationsAdapter;
     ImageView imageDelete;
     ImageView imageSave;
+    ImageView imageStart;
 
     LatLng point;
     @Override
@@ -125,6 +129,27 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
             @Override
             public void onClick(View v) {
                 saveLocation();
+            }
+        });
+
+        imageStart = view.findViewById(R.id.image_start_trip);
+        imageStart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //GO VERS DatePickerFragment
+                // Create new fragment and transaction
+                DatePickerFragment newFragment = new DatePickerFragment();
+                FragmentTransaction transaction = getFragmentManager().beginTransaction();
+
+                // Replace whatever is in the fragment_container view with this fragment,
+                // and add the transaction to the back stack
+                transaction.replace(R.id.fragmentHolder, new DatePickerFragment(), "DatepickerFragment");
+                transaction.addToBackStack(null);
+
+                    // Commit the transaction
+                transaction.commit();
+
+
             }
         });
         //Intent intent = new Intent(this, PlacesActivity.class);

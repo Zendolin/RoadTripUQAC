@@ -79,6 +79,18 @@
         android:visibility="invisible"
         app:srcCompat="@drawable/ic_delete_forever_black_24dp" />
 
+    <ImageView
+        android:id="@+id/image_start_trip"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_below="@id/relLayout1"
+        android:layout_alignParentLeft="true"
+        android:layout_marginTop="300dp"
+        android:layout_marginRight="10dp"
+        android:scaleType="centerCrop"
+        android:visibility="visible"
+        app:srcCompat="@drawable/ic_explore_black_24dp" />
+
     <!--
       <RelativeLayout
           android:id="@+id/search"
