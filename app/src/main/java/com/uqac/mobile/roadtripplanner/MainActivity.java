@@ -7,6 +7,7 @@ import android.util.Log;
 import com.google.firebase.auth.FirebaseAuth;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -28,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void changeFragment(String fragment)
+   /* public void changeFragment(String fragment)
     {
         profile = new Profile();
         Log.d(TAG,"------changing fragment to : " + fragment + "-------");
@@ -51,6 +52,20 @@ public class MainActivity extends AppCompatActivity {
             transaction.replace(R.id.ContentLayout,new MapFragment(),"Map_FRAGMENT");
             transaction.commit();
         }
+        if(fragment.equals("DatePickerFragment")){
+
+        }
+
+    }*/
+
+    public void changeFragment(Fragment fragment, String tag){
+        profile = new Profile();
+        Log.d(TAG,"------changing fragment to : " + fragment + "-------");
+        FragmentManager manager = getSupportFragmentManager();
+
+        FragmentTransaction transaction = manager.beginTransaction();
+        transaction.replace(R.id.ContentLayout, fragment,tag);
+        transaction.commit();
     }
 
     public void exit()

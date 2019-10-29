@@ -79,6 +79,8 @@ public class LoginActivity extends AppCompatActivity {
         transaction.commit();
     }
 
+
+
     public void changeFragment()
     {
         FragmentManager manager = getSupportFragmentManager();

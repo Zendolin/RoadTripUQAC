@@ -136,19 +136,20 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
         imageStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //GO VERS DatePickerFragment
+               /* //GO VERS DatePickerFragment
                 // Create new fragment and transaction
-                DatePickerFragment newFragment = new DatePickerFragment();
+
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
 
                 // Replace whatever is in the fragment_container view with this fragment,
                 // and add the transaction to the back stack
-                transaction.replace(R.id.fragmentHolder, new DatePickerFragment(), "DatepickerFragment");
+                transaction.replace(R.id.ContentLayout, new DatePickerFragment(), "DatepickerFragment");
                 transaction.addToBackStack(null);
 
-                    // Commit the transaction
-                transaction.commit();
-
+                // Commit the transaction
+                transaction.commit();*/
+                DatePickerFragment newFragment = new DatePickerFragment();
+                ((MainActivity)getActivity()).changeFragment(newFragment, "dataFragment");
 
             }
         });

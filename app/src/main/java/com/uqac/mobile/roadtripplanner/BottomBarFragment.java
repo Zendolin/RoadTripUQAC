@@ -117,25 +117,30 @@ public class BottomBarFragment extends Fragment {
 
     private void clickProfile()
     {
-        ((MainActivity)getActivity()).changeFragment("ProfileFragment");
+        ProfileFragment PF = new ProfileFragment();
+        ((MainActivity)getActivity()).changeFragment(PF,"ProfileFragment");
     }
 
     private void clickMyTrips()
     {
-        ((MainActivity)getActivity()).changeFragment("MyTripsFragments");
+        MyTripSquareFragment MTF = new MyTripSquareFragment();
+        ((MainActivity)getActivity()).changeFragment(MTF,"MyTripsFragments");
     }
 
     private void clickPlanATrip()
     {
-        ((MainActivity)getActivity()).changeFragment("MapFragment");
+        MapFragment MF = new MapFragment();
+        ((MainActivity)getActivity()).changeFragment(MF,"MapFragment");
     }
     private void clickChat()
     {
-        ((MainActivity)getActivity()).changeFragment("ChatFragment");
+        MapFragment MF = new MapFragment();
+        ((MainActivity)getActivity()).changeFragment(MF,"ChatFragment");
     }
 
     private void clickFriends()
     {
-        ((MainActivity)getActivity()).changeFragment("SettingsFragments");
+        MapFragment MF = new MapFragment();
+        ((MainActivity)getActivity()).changeFragment(MF,"SettingsFragments");
     }
 }
