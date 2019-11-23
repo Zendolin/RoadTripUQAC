@@ -1,4 +1,4 @@
-package com.example.pocroadtrip.Utils;
+package com.uqac.mobile.roadtripplanner.Utils;
 
 public class Constants {
 
