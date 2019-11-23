@@ -4,8 +4,6 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -69,14 +67,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.example.pocroadtrip.Utils.Constants.DEFAULT_ZOOM;
-import static com.example.pocroadtrip.Utils.Constants.ERROR_DIALOG_REQUEST;
-import static com.example.pocroadtrip.Utils.Constants.MY_LOCATION;
-import static com.example.pocroadtrip.Utils.Constants.PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION;
-import static com.example.pocroadtrip.Utils.Constants.PERMISSIONS_REQUEST_ENABLE_GPS;
+import static com.uqac.mobile.roadtripplanner.Utils.Constants.DEFAULT_ZOOM;
+import static com.uqac.mobile.roadtripplanner.Utils.Constants.ERROR_DIALOG_REQUEST;
+import static com.uqac.mobile.roadtripplanner.Utils.Constants.MY_LOCATION;
+import static com.uqac.mobile.roadtripplanner.Utils.Constants.PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION;
+import static com.uqac.mobile.roadtripplanner.Utils.Constants.PERMISSIONS_REQUEST_ENABLE_GPS;
+
 
 public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener {
-
 
     private static final String TAG = "MapFragment";
     private ArrayList<Place> places = new ArrayList<>();
@@ -99,6 +97,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
     ImageView imageStart;
 
     LatLng point;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -106,7 +105,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
       /*  SupportMapFragment mapFragment = (SupportMapFragment) getActivity().getSupportFragmentManager()
                 .findFragmentById(R.id.map);*/
-        mapFragment = (SupportMapFragment)getChildFragmentManager().findFragmentById(R.id.map);
+        mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
         gps = view.findViewById(R.id.ic_gps);
         gps.setOnClickListener(new View.OnClickListener() {
@@ -116,7 +115,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
             }
         });
 
-        getProfileData();
+        //getProfileData();
         imageDelete = view.findViewById(R.id.image_map_deletePoint);
         imageDelete.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -131,7 +130,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
                 saveLocation();
             }
         });
-
         imageStart = view.findViewById(R.id.image_start_trip);
         imageStart.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -149,7 +147,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
                 // Commit the transaction
                 transaction.commit();*/
                 DatePickerFragment newFragment = new DatePickerFragment();
-                ((MainActivity)getActivity()).changeFragment(newFragment, "dataFragment");
+                ((MainActivity) getActivity()).changeFragment(newFragment, "dataFragment");
 
             }
         });
@@ -158,15 +156,15 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
         //startActivity(intent);
         String apiKey = getString(R.string.google_maps_key);
 
-        if(!Places.isInitialized()){
+        if (!Places.isInitialized()) {
             Places.initialize(getActivity().getApplicationContext(), apiKey);
         }
-        profile  = new Profile();
         placesClient = Places.createClient(this.getActivity().getApplicationContext());
         searchText = view.findViewById(R.id.input_search);
         gps = view.findViewById(R.id.ic_gps);
 
         getLocationPermission();
+        profile = ((MainActivity)getActivity()).profile;
         /*final AutocompleteSupportFragment autocompleteSupportFragment = (AutocompleteSupportFragment) getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment);
 
         autocompleteSupportFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.LAT_LNG, Place.Field.NAME, Place.Field.PHOTO_METADATAS));
@@ -229,7 +227,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
         listOfDestinationsAdapter = new PlacesAdapter(this, places);
         listOfDestinations.setAdapter(listOfDestinationsAdapter);
         */
-        return  view;
+        return view;
     }
 
     @Override
@@ -237,7 +235,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
 
     }
 
-    public void onClickGps(View view){
+    public void onClickGps(View view) {
         getDeviceLocation();
     }
 
@@ -261,19 +259,19 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
         List<Address> list = new ArrayList<>();
         try {
             list = geocoder.getFromLocationName(searchString, 1);
-        } catch(IOException e ){
+        } catch (IOException e) {
             Log.e(TAG, "geoLocate: IOException + " + e.getMessage());
         }
-        if(list.size() > 0){
+        if (list.size() > 0) {
             Address address = list.get(0);
             Log.d(TAG, "geoLocate: found an address : " + address.toString());
             moveCamera(new LatLng(address.getLatitude(), address.getLongitude()), DEFAULT_ZOOM, address.getAddressLine(0));
         }
     }
 
-    private boolean checkMapServices(){
-        if(isServicesOK()){
-            if(isMapsEnabled()){
+    private boolean checkMapServices() {
+        if (isServicesOK()) {
+            if (isMapsEnabled()) {
                 return true;
             }
         }
@@ -294,10 +292,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
         alert.show();
     }
 
-    public boolean isMapsEnabled(){
-        final LocationManager manager = (LocationManager) getActivity().getSystemService( Context.LOCATION_SERVICE );
+    public boolean isMapsEnabled() {
+        final LocationManager manager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
 
-        if ( !manager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {
+        if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
             buildAlertMessageNoGps();
             return false;
         }
@@ -322,36 +320,35 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
         }
     }
 
-    public boolean isServicesOK(){
+    public boolean isServicesOK() {
         Log.d(TAG, "isServicesOK: checking google services version");
 
         int available = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this.getActivity());
 
-        if(available == ConnectionResult.SUCCESS){
+        if (available == ConnectionResult.SUCCESS) {
             //everything is fine and the user can make map requests
             Log.d(TAG, "isServicesOK: Google Play Services is working");
             return true;
-        }
-        else if(GoogleApiAvailability.getInstance().isUserResolvableError(available)){
+        } else if (GoogleApiAvailability.getInstance().isUserResolvableError(available)) {
             //an error occured but we can resolve it
             Log.d(TAG, "isServicesOK: an error occured but we can fix it");
             Dialog dialog = GoogleApiAvailability.getInstance().getErrorDialog(this.getActivity(), available, ERROR_DIALOG_REQUEST);
             dialog.show();
-        }else{
+        } else {
             //Toast.makeText(this, "You can't make map requests", Toast.LENGTH_SHORT).show();
         }
         return false;
     }
 
-    private void getDeviceLocation(){
+    private void getDeviceLocation() {
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this.getActivity());
         try {
-            if(mLocationPermissionGranted){
+            if (mLocationPermissionGranted) {
                 final Task location = mFusedLocationProviderClient.getLastLocation();
                 location.addOnCompleteListener(new OnCompleteListener() {
                     @Override
                     public void onComplete(@NonNull Task task) {
-                        if(task.isSuccessful()){
+                        if (task.isSuccessful()) {
                             Location currentLocation = (Location) task.getResult();
                             moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), DEFAULT_ZOOM, MY_LOCATION);
                         } else {
@@ -360,7 +357,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
                     }
                 });
             }
-        } catch(SecurityException e){
+        } catch (SecurityException e) {
             Log.e(TAG, "getDeviceLocation: SecurityException : " + e.getMessage());
         }
     }
@@ -387,10 +384,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
         Log.d(TAG, "onActivityResult: called.");
         switch (requestCode) {
             case PERMISSIONS_REQUEST_ENABLE_GPS: {
-                if(mLocationPermissionGranted){
+                if (mLocationPermissionGranted) {
                     //getChatrooms();
-                }
-                else{
+                } else {
                     getLocationPermission();
                 }
             }
@@ -401,7 +397,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        if(mLocationPermissionGranted){
+        if (mLocationPermissionGranted) {
             getDeviceLocation();
             mMap.setMyLocationEnabled(true);
             // Disable the default button
@@ -417,84 +413,61 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
                     mMap.addMarker(new MarkerOptions().position(point));
                     imageDelete.setVisibility(View.VISIBLE);
                     imageSave.setVisibility(View.VISIBLE);
-
                 }
             });
         }
     }
 
-    private void deletePoint()
-    {
+    private void deletePoint() {
         mMap.clear();
         point = null;
         imageDelete.setVisibility(View.INVISIBLE);
         imageSave.setVisibility(View.INVISIBLE);
     }
 
-    private void saveLocation()
-    {
-        if(point != null)
-        {
+    private void saveLocation() {
+        if (point != null) {
             AlertDialog.Builder alertDiag = new AlertDialog.Builder(getActivity());
             final EditText edittext = new EditText(getActivity());
             alertDiag.setMessage("Choose a name for your trip");
             alertDiag.setTitle("Save a Trip");
-
             alertDiag.setView(edittext);
-
             alertDiag.setPositiveButton("Save", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
-                    if(!profile.countSavedPoints.isEmpty()) {
-                        try {
-                            FirebaseUser userFireBase = FirebaseAuth.getInstance().getCurrentUser();
-                            DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("users").child(userFireBase.getUid()).child("saved_points").child("point_" + profile.countSavedPoints);
-
-                            Log.d(TAG, "---------current count : " + profile.countSavedPoints + "-------");
-                            Map<String, Object> map = new HashMap<String, Object>();
-                            map.put("latitude", point.latitude);
-                            map.put("longitude", point.longitude);
-                            if (edittext.getText() != null)
-                                map.put("tripname", edittext.getText().toString());
-                            reference.updateChildren(map);
-
-                            reference = FirebaseDatabase.getInstance().getReference().child("users").child(userFireBase.getUid());
-                            int count = Integer.parseInt(profile.countSavedPoints);
-                            count += 1;
-                            profile.countSavedPoints = "" + count;
-                            Log.d(TAG, "---------next count : " + profile.countSavedPoints + "-------");
-                            map = new HashMap<String, Object>();
-                            map.put("countsavedpoints", profile.countSavedPoints);
-                            reference.updateChildren(map);
-
-                            Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Location saved !", Toast.LENGTH_LONG);
-                            toast.show();
-                        } catch (Exception e) {
-                            Toast toast = Toast.makeText(getActivity().getApplicationContext(), "An error occured...", Toast.LENGTH_LONG);
-                            Log.d(TAG,"---------------Error saving Point-------");
-                            toast.show();
-                            e.printStackTrace();
-                        }
+                    try {
+                        MyTrip trip = new MyTrip(profile.uid,edittext.getText().toString(),"","","0");
+                        //TODO Dates
+                        Stage st = new Stage(point.latitude,point.longitude,"","");
+                        if(trip.listStages == null)      Log.e(TAG, "---listStages NULL");
+                        trip.listStages.add(st);
+                        if( profile.trips == null)      Log.e(TAG, "---profile List NULL");
+                        profile.trips.add(trip);
+                        profile.SaveProfile();
+                        Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Location saved !", Toast.LENGTH_LONG);
+                        toast.show();
+                    } catch (Exception e) {
+                        Toast toast = Toast.makeText(getActivity().getApplicationContext(), "An error occured...", Toast.LENGTH_LONG);
+                        Log.e(TAG, "---------------Error saving Point-------");
+                        toast.show();
+                        Log.e(TAG,"------" + e.toString());
                     }
-                    else Log.d(TAG,"---------------countSavedPoints is empty-------");
-
                 }
             });
             alertDiag.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
-                    // User cancelled the dialog
                 }
             });
 
             AlertDialog dialog = alertDiag.create();
             dialog.show();
-        } else Log.d(TAG,"---------------Saved point is null-------");
+        } else Log.d(TAG, "---------------Saved point is null-------");
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        if(checkMapServices()){
-            if(mLocationPermissionGranted){
+        if (checkMapServices()) {
+            if (mLocationPermissionGranted) {
                 //TODO: use application
             } else {
                 getLocationPermission();
@@ -502,39 +475,38 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
         }
     }
 
-    private void moveCamera(LatLng latLng, float zoom, String title){
+    private void moveCamera(LatLng latLng, float zoom, String title) {
         Log.d(TAG, "moveCamera: moving the camera to lat " + latLng.latitude + " | lng " + latLng.longitude);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
-        if(title != MY_LOCATION){
+        if (title != MY_LOCATION) {
             MarkerOptions options = new MarkerOptions().position(latLng).title(title);
             mMap.addMarker(options);
         }
         hideSoftKeyboard();
     }
 
-    public void moveToDestination(Place place){
+    public void moveToDestination(Place place) {
         LatLng dest = place.getLatLng();
         mMap.addMarker(new MarkerOptions().position(dest).title(place.getName()));
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(dest, 15));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(dest));
     }
 
-    public void updateListOfDestinations(Place place){
+    public void updateListOfDestinations(Place place) {
         Log.i("updateList", "list updated");
         places.add(place);
         listOfDestinationsAdapter.notifyDataSetChanged();
 
     }
 
-    private void hideSoftKeyboard(){
-        if(this.getActivity().getWindow() != null)
-        {
+    private void hideSoftKeyboard() {
+        if (this.getActivity().getWindow() != null) {
             this.getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         }
 
     }
 
-    private void logPlacesData(String placeId){
+    private void logPlacesData(String placeId) {
 
         // Specify the fields to return.
         List<Place.Field> placeFields = Arrays.asList(Place.Field.ID, Place.Field.LAT_LNG, Place.Field.NAME, Place.Field.PHOTO_METADATAS);
@@ -565,10 +537,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
         searchText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
-                if(i == EditorInfo.IME_ACTION_SEARCH
+                if (i == EditorInfo.IME_ACTION_SEARCH
                         || i == EditorInfo.IME_ACTION_DONE
                         || keyEvent.getAction() == KeyEvent.ACTION_DOWN
-                        || keyEvent.getAction() == KeyEvent.KEYCODE_ENTER){
+                        || keyEvent.getAction() == KeyEvent.KEYCODE_ENTER) {
                     // search
 
                     geoLocate();
@@ -577,7 +549,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
             }
         });
     }
-
+/*
     private void getProfileData() {
         final DatabaseReference reference = FirebaseDatabase.getInstance().getReference("users");
         reference.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
@@ -592,14 +564,14 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
                     profile.firstName = dataSnapshot.child("firstname").getValue().toString();
                 if (dataSnapshot.child("birthdate").getValue() != null)
                     profile.birthDate = dataSnapshot.child("birthdate").getValue().toString();
-                if (dataSnapshot.child("countsavedpoints").getValue() != null)
-                    profile.countSavedPoints = dataSnapshot.child("countsavedpoints").getValue().toString();
-                Log.d(TAG, "---Profile get  , count : " + profile.countSavedPoints+"---");
+                if (dataSnapshot.child("countSavedTrips").getValue() != null)
+                    profile.countSavedTrips = dataSnapshot.child("countSavedTrips").getValue().toString();
+                Log.d(TAG, "---Profile get  , count : " + profile.countSavedTrips+"---");
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 Log.d(TAG, "-----" + databaseError.getMessage() + "----");
             }
         });
-    }
+    }*/
 }

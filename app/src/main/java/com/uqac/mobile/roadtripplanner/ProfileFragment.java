@@ -26,6 +26,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.uqac.mobile.roadtripplanner.Utils.ProfileLoader;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -41,7 +42,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-public class ProfileFragment extends Fragment {
+public class ProfileFragment extends Fragment implements ProfileLoader {
 
     private static String TAG = "----------RoadTrip Planner-------------";
     private static final int REQUEST_CODE = 1;
@@ -101,9 +102,8 @@ public class ProfileFragment extends Fragment {
 
 
         FirebaseUser userFireBase = FirebaseAuth.getInstance().getCurrentUser();
-        StorageReference storageRef = FirebaseStorage.getInstance().getReference();
 
-        profile = new Profile(storageRef, userFireBase);
+        profile = new Profile(userFireBase);
         checkNewUser();
         getProfileData();
         getProfilePicture();
@@ -154,75 +154,11 @@ public class ProfileFragment extends Fragment {
     }
 
     private void getProfileData() {
-        Log.d(TAG, "-----fetching user informations of :  " + profile.uid + "   ------");
-        final DatabaseReference reference = FirebaseDatabase.getInstance().getReference("users");
-        reference.child(profile.uid).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                Map<String, Object> userData = new HashMap<String, Object>();
-
-                Log.d(TAG, "-----data found !------");
-                if (dataSnapshot.child("email").getValue() != null)
-                    profile.email = dataSnapshot.child("email").getValue().toString();
-                if (dataSnapshot.child("lastname").getValue() != null)
-                    profile.lastName = dataSnapshot.child("lastname").getValue().toString();
-                else userData.put("lastname", "LastName");
-                if (dataSnapshot.child("firstname").getValue() != null)
-                    profile.firstName = dataSnapshot.child("firstname").getValue().toString();
-                else userData.put("firstname", "FirstName");
-                if (dataSnapshot.child("birthdate").getValue() != null)
-                    profile.birthDate = dataSnapshot.child("birthdate").getValue().toString();
-                else userData.put("birthdate", "birthdate not set");
-                if (dataSnapshot.child("countsavedpoints").getValue() != null)
-                    profile.countSavedPoints = dataSnapshot.child("countsavedpoints").getValue().toString();
-                else userData.put("countsavedpoints", "0");
-                if (profile.profilePicture != null) {
-                    image.setImageBitmap(profile.profilePicture);
-                }
-                if (profile.email != null) {
-                    textEmail.setText(profile.email);
-                }
-                if (profile.birthDate != null) {
-                    textBirthDate.setText((profile.birthDate));
-                }
-                if (profile.firstName != null && profile.lastName != null) {
-                    textFirstName.setText((profile.firstName));
-                    textLastname.setText((profile.lastName));
-                } else {
-                    String fullName = profile.user.getDisplayName();
-                    if (fullName != null) {
-                        fullName = fullName.replace("\n", " ");
-                        String[] parts = fullName.split("");
-                        profile.firstName = parts[0];
-                        profile.lastName = parts[1];
-                        textFirstName.setText(parts[0]);
-                        textLastname.setText(parts[1]);
-                    }
-
-                }
-                if(profile != null)
-                {
-                    updateProfile();
-                    listMyTrips();
-                }
-                if(!userData.isEmpty()) reference.child(profile.uid).updateChildren(userData);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.d(TAG, "-----" + databaseError.getMessage() + "----");
-            }
-        });
+        profile.LoadProfile(this);
     }
 
-    private void updateProfile()
-    {
-        mainActivity.profile = profile;
-        Log.d(TAG,"---profile set to Main  activity , count : " + mainActivity.profile.countSavedPoints+" ---");
-    }
     private void getProfilePicture() {
-        StorageReference pathReference = profile.storage.child("images/ProfilePicture_" + profile.uid + ".jpg");
-        final long ONE_MEGABYTE = 1024 * 1024;
+        StorageReference pathReference = FirebaseStorage.getInstance().getReference().child("images/ProfilePicture_" + profile.uid + ".jpg");
         try {
             final File localFile = File.createTempFile("Images", "bmp");
             pathReference.getFile(localFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
@@ -252,24 +188,19 @@ public class ProfileFragment extends Fragment {
             layoutProfileInfo.setVisibility(View.GONE);
             layoutProfileEdit.setVisibility(View.VISIBLE);
         } else {
-            final DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("users").child(profile.uid);
-            Map<String, Object> userData = new HashMap<String, Object>();
             if (editProfileBirthdate.getText() != null) {
-                userData.put("birthdate", editProfileBirthdate.getText().toString());
                 profile.birthDate = editProfileBirthdate.getText().toString();
                 textBirthDate.setText(profile.birthDate);
             }
             if (editProfileFirstname.getText() != null) {
-                userData.put("firstname", editProfileFirstname.getText().toString());
                 profile.firstName = editProfileFirstname.getText().toString();
                 textFirstName.setText(profile.firstName);
             }
             if (editProfileLastname.getText() != null) {
-                userData.put("lastname", editProfileLastname.getText().toString());
                 profile.lastName = editProfileLastname.getText().toString();
                 textLastname.setText(profile.lastName);
             }
-            reference.updateChildren(userData);
+            profile.SaveProfile();
             layoutProfileInfo.setVisibility(View.VISIBLE);
             layoutProfileEdit.setVisibility(View.GONE);
         }
@@ -285,8 +216,6 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 if (!snapshot.hasChild(profile.uid)) {
-
-                    //reference.setValue(profile.uid);
                     final DatabaseReference referenceUID = reference.child(profile.uid);
                     Log.d(TAG, "-----creating new UID-----");
                     Map<String, Object> userData = new HashMap<String, Object>();
@@ -301,8 +230,7 @@ public class ProfileFragment extends Fragment {
                     userData.put("email", profile.email);
                     userData.put("firstname", profile.firstName);
                     userData.put("lastname", profile.lastName);
-                    userData.put("birthdate", "birthdate not set");
-                    userData.put("countsavedpoints", "0");
+                    userData.put("birthdate", "");
                     referenceUID.updateChildren(userData);
                     ((MainActivity) getActivity()).profile = profile;
                 } else {
@@ -318,6 +246,7 @@ public class ProfileFragment extends Fragment {
     }
 
     private void listMyTrips() {
+
         if(!isAdded()) return;
         for (Fragment fragment : getChildFragmentManager().getFragments()) {
                 if(!fragment.isAdded()) return;
@@ -325,41 +254,52 @@ public class ProfileFragment extends Fragment {
                 getChildFragmentManager().beginTransaction().remove(fragment).commit();
             }
         }
-        final DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("users").child(this.profile.uid).child("saved_points");
-        reference.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    MyTripSquareFragment frag = new MyTripSquareFragment();
-                    FragmentManager manager = getChildFragmentManager();
-                    FragmentTransaction transaction = manager.beginTransaction();
-                    transaction.add(R.id.myTripSquareFragment_holder,frag,"MyTripSquare_FRAGMENT");
-                    transaction.commit();
-                    manager.executePendingTransactions();
+        for(MyTrip t : profile.trips)
+        {
+            MyTripSquareFragment frag = new MyTripSquareFragment();
+            FragmentManager manager = getChildFragmentManager();
+            FragmentTransaction transaction = manager.beginTransaction();
+            transaction.add(R.id.myTripSquareFragment_holder,frag,"MyTripSquare_FRAGMENT");
+            transaction.commit();
+            manager.executePendingTransactions();
 
-                    String latitude ="";
-                    String longitude ="";
-                    String tripName ="";
-
-                    if (snapshot.child("tripname").getValue() != null)
-                        tripName= snapshot.child("tripname").getValue().toString();
-                    if (snapshot.child("latitude").getValue() != null)
-                        latitude= snapshot.child("latitude").getValue().toString();
-                    if (snapshot.child("longitude").getValue() != null)
-                        longitude= snapshot.child("longitude").getValue().toString();
-
-                    MyTrip mytrip = new  MyTrip(profile.uid,tripName,longitude,latitude);
-                    frag.initMap(mytrip);
-                }
-            }
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        });
-
+            frag.initMap(t);
+        }
     }
 
     private void logout() {
         ((MainActivity) getActivity()).exit();
+    }
+
+    @Override
+    public void LoadProfileData(Profile p) {
+        if (profile.profilePicture != null) {
+            image.setImageBitmap(profile.profilePicture);
+        }
+        if (profile.email != null) {
+            textEmail.setText(profile.email);
+        }
+        if (profile.birthDate != null) {
+            textBirthDate.setText((profile.birthDate));
+        }
+        if (profile.firstName != null && profile.lastName != null) {
+            textFirstName.setText((profile.firstName));
+            textLastname.setText((profile.lastName));
+        } else {
+            String fullName = profile.user.getDisplayName();
+            if (fullName != null) {
+                fullName = fullName.replace("\n", " ");
+                String[] parts = fullName.split("");
+                profile.firstName = parts[0];
+                profile.lastName = parts[1];
+                textFirstName.setText(parts[0]);
+                textLastname.setText(parts[1]);
+            }
+        }
+        if(profile != null)
+        {
+            mainActivity.profile = profile;
+            listMyTrips();
+        }
     }
 }

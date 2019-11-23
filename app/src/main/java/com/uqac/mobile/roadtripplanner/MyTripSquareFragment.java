@@ -41,17 +41,14 @@ public class MyTripSquareFragment extends Fragment  implements OnMapReadyCallbac
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+
         mMap.getUiSettings().setScrollGesturesEnabled(false);
         mMap.setMinZoomPreference(8.0f);
 
-        if(!m.latitude.isEmpty() && !m.longitude.isEmpty())
-        {
-            Log.d(TAG,"----------latitude: "+ m.latitude);
-            LatLng coords = new LatLng(Double.parseDouble(m.latitude), Double.parseDouble(m.longitude));
-            float latitude;
-            float longitue;
-            mMap.moveCamera(CameraUpdateFactory.newLatLng(coords));
-        }
-    }
+        Double longitude = m.listStages.get(0).longitude;
+        Double latitude = m.listStages.get(0).latitude;
 
+        LatLng coords = new LatLng(latitude, longitude);
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(coords));
+    }
 }
