@@ -1,11 +1,14 @@
 package com.uqac.mobile.roadtripplanner;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.uqac.mobile.roadtripplanner.Utils.Constants;
 
 import androidx.fragment.app.Fragment;
 
@@ -19,7 +22,6 @@ public class BottomBarFragment extends Fragment {
 
     private ImageView imageProfile;
     private TextView textProfile;
-
 
     private ImageView imageMyTrips;
     private TextView textMyTrips;
@@ -111,7 +113,8 @@ public class BottomBarFragment extends Fragment {
                 clickChat();
             }
         });
-
+        imageProfile.setBackgroundColor(Color.GREEN);
+        textProfile.setBackgroundColor(Color.GREEN);
         return view;
     }
 
@@ -119,28 +122,83 @@ public class BottomBarFragment extends Fragment {
     {
         ProfileFragment PF = new ProfileFragment();
         ((MainActivity)getActivity()).changeFragment(PF,"ProfileFragment");
+        imageProfile.setBackgroundColor(Color.GREEN);
+        imageMyTrips.setBackgroundColor(Color.WHITE);
+        imagePlanATrip.setBackgroundColor(Color.WHITE);
+        imageChat.setBackgroundColor(Color.WHITE);
+        imageFriends.setBackgroundColor(Color.WHITE);
+
+        textProfile.setBackgroundColor(Color.GREEN);
+        textMyTrips.setBackgroundColor(Color.WHITE);
+        textPlanATrip.setBackgroundColor(Color.WHITE);
+        textChat.setBackgroundColor(Color.WHITE);
+        textFriends.setBackgroundColor(Color.WHITE);
     }
 
     private void clickMyTrips()
     {
         MyTripSquareFragment MTF = new MyTripSquareFragment();
         ((MainActivity)getActivity()).changeFragment(MTF,"MyTripsFragments");
+        imageProfile.setBackgroundColor(Color.WHITE);
+        imageMyTrips.setBackgroundColor(Color.GREEN);
+        imagePlanATrip.setBackgroundColor(Color.WHITE);
+        imageChat.setBackgroundColor(Color.WHITE);
+        imageFriends.setBackgroundColor(Color.WHITE);
+
+        textProfile.setBackgroundColor(Color.WHITE);
+        textMyTrips.setBackgroundColor(Color.GREEN);
+        textPlanATrip.setBackgroundColor(Color.WHITE);
+        textChat.setBackgroundColor(Color.WHITE);
+        textFriends.setBackgroundColor(Color.WHITE);
     }
 
     private void clickPlanATrip()
     {
         MapFragment MF = new MapFragment();
         ((MainActivity)getActivity()).changeFragment(MF,"MapFragment");
+        imageProfile.setBackgroundColor(Color.WHITE);
+        imageMyTrips.setBackgroundColor(Color.WHITE);
+        imagePlanATrip.setBackgroundColor(Color.GREEN);
+        imageChat.setBackgroundColor(Color.WHITE);
+        imageFriends.setBackgroundColor(Color.WHITE);
+
+        textProfile.setBackgroundColor(Color.WHITE);
+        textMyTrips.setBackgroundColor(Color.WHITE);
+        textPlanATrip.setBackgroundColor(Color.GREEN);
+        textChat.setBackgroundColor(Color.WHITE);
+        textFriends.setBackgroundColor(Color.WHITE);
     }
     private void clickChat()
     {
         MapFragment MF = new MapFragment();
         ((MainActivity)getActivity()).changeFragment(MF,"ChatFragment");
+        imageProfile.setBackgroundColor(Color.WHITE);
+        imageMyTrips.setBackgroundColor(Color.WHITE);
+        imagePlanATrip.setBackgroundColor(Color.WHITE);
+        imageChat.setBackgroundColor(Color.GREEN);
+        imageFriends.setBackgroundColor(Color.WHITE);
+
+        textProfile.setBackgroundColor(Color.WHITE);
+        textMyTrips.setBackgroundColor(Color.WHITE);
+        textPlanATrip.setBackgroundColor(Color.WHITE);
+        textChat.setBackgroundColor(Color.GREEN);
+        textFriends.setBackgroundColor(Color.WHITE);
     }
 
     private void clickFriends()
     {
-        MapFragment MF = new MapFragment();
-        ((MainActivity)getActivity()).changeFragment(MF,"SettingsFragments");
+        FriendsFragment FF = new FriendsFragment();
+        ((MainActivity)getActivity()).changeFragment(FF,"FriendsFragments");
+        imageProfile.setBackgroundColor(Color.WHITE);
+        imageMyTrips.setBackgroundColor(Color.WHITE);
+        imagePlanATrip.setBackgroundColor(Color.WHITE);
+        imageChat.setBackgroundColor(Color.WHITE);
+        imageFriends.setBackgroundColor(Color.GREEN);
+
+        textProfile.setBackgroundColor(Color.WHITE);
+        textMyTrips.setBackgroundColor(Color.WHITE);
+        textPlanATrip.setBackgroundColor(Color.WHITE);
+        textChat.setBackgroundColor(Color.WHITE);
+        textFriends.setBackgroundColor(Color.GREEN);
     }
 }
