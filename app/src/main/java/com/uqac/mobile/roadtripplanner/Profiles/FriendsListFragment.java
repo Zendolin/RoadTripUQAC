@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -15,31 +14,31 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.uqac.mobile.roadtripplanner.MainActivity;
 import com.uqac.mobile.roadtripplanner.R;
-import com.uqac.mobile.roadtripplanner.SearchUserFragment;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
-public class FriendsFragment extends Fragment {
+public class FriendsListFragment extends Fragment {
 
     private static String TAG = "----------RoadTrip Planner-------------";
     private Button btn;
     private Profile profile;
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+    {
         View view = inflater.inflate(R.layout.friend_fragment_layout, container, false);
         btn = view.findViewById(R.id.friends_btnSearch);
         final FragmentManager fm=getFragmentManager();
         final SearchUserFragment searchFrag =  new SearchUserFragment();
+        searchFrag.fragList = this;
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
-                // TODO Auto-generated method stub
-                searchFrag.show(fm, "Best Players");
+                searchFrag.show(fm, "Users");
             }
         });
         profile = ((MainActivity)getActivity()).profile;
@@ -88,7 +87,22 @@ public class FriendsFragment extends Fragment {
                 Log.d(TAG, "-----" + databaseError.getMessage() + "----");
             }
         });
+
+        listFragments();
         return view;
+    }
+    public void listFragments()
+    {
+        for(ProfileRef pr : profile.friends)
+        {
+            FriendSquareFragment frag = new FriendSquareFragment();
+            FragmentManager manager = getChildFragmentManager();
+            FragmentTransaction transaction = manager.beginTransaction();
+            transaction.add(R.id.friends_container,frag,"FriendSquareFragment_FRAGMENT");
+            transaction.commit();
+            manager.executePendingTransactions();
+            frag.initFragment(pr);
+        }
     }
 
 }
