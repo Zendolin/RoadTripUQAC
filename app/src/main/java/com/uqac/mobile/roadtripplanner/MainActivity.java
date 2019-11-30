@@ -5,6 +5,9 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.uqac.mobile.roadtripplanner.Login.LoginActivity;
+import com.uqac.mobile.roadtripplanner.Profiles.Profile;
+import com.uqac.mobile.roadtripplanner.Profiles.ProfileFragment;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -14,7 +17,7 @@ import androidx.fragment.app.FragmentTransaction;
 public class MainActivity extends AppCompatActivity {
 
     static String TAG = "----------RoadTrip Planner-------------";
-    Profile profile;
+    public Profile profile;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

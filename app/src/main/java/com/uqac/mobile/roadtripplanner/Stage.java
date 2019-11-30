@@ -6,7 +6,7 @@ public class Stage {
     public String startDate;
     public String endDate;
 
-    Stage(double la,double lo,String startDate,String endDate)
+    public Stage(double la,double lo,String startDate,String endDate)
     {
         //place = p;
         longitude = lo;

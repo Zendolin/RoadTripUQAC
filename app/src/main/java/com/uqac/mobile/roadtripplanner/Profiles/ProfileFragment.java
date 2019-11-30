@@ -1,4 +1,4 @@
-package com.uqac.mobile.roadtripplanner;
+package com.uqac.mobile.roadtripplanner.Profiles;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -26,6 +26,9 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.uqac.mobile.roadtripplanner.MainActivity;
+import com.uqac.mobile.roadtripplanner.MyTrip;
+import com.uqac.mobile.roadtripplanner.R;
 import com.uqac.mobile.roadtripplanner.Utils.ProfileLoader;
 
 import java.io.File;

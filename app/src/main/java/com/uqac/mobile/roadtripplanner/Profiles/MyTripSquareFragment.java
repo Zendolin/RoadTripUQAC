@@ -1,4 +1,4 @@
-package com.uqac.mobile.roadtripplanner;
+package com.uqac.mobile.roadtripplanner.Profiles;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -12,6 +12,8 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.uqac.mobile.roadtripplanner.MyTrip;
+import com.uqac.mobile.roadtripplanner.R;
 
 import androidx.fragment.app.Fragment;
 
@@ -23,7 +25,8 @@ public class MyTripSquareFragment extends Fragment  implements OnMapReadyCallbac
     private SupportMapFragment mapFragment;
     private GoogleMap mMap;
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+    {
 
         View view = inflater.inflate(R.layout.mytrip_square_fragment_layout, container, false);
         return view;

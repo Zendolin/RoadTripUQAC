@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/constraintLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/border"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/linearLayoutProfilePicture"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="24dp"
+        android:orientation="vertical"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/friend_imageViewProfile"
+            android:layout_width="96dp"
+            android:layout_height="96dp"
+            android:background="#C4C4C4"
+            app:srcCompat="@drawable/com_facebook_profile_picture_blank_square" />
+    </LinearLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/LayoutProfile"
+        android:layout_width="296dp"
+        android:layout_height="107dp"
+        android:layout_marginTop="16dp"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:id="@+id/linearLayout"
+            android:layout_width="216dp"
+            android:layout_height="108dp"
+            android:clickable="false"
+            android:orientation="vertical"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/friend_textFirstName"
+                android:layout_width="175dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginRight="6dp"
+                android:text="firstName"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/friend_textLastName"
+                android:layout_width="175dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginRight="6dp"
+                android:text="lastName"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/friend_textBirthdate"
+                android:layout_width="175dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp" />
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/friend_buttonDelete"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="33dp"
+            android:layout_height="31dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/quantum_ic_clear_grey600_24"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/linearLayout" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <ScrollView
+        android:id="@+id/friend_scrollTrips"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@+id/friend_buttonExtend"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/LayoutProfile">
+
+        <LinearLayout
+            android:id="@+id/friend_TripsContainer"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:orientation="vertical"
+            android:visibility="visible"/>
+    </ScrollView>
+
+    <Button
+        android:id="@+id/friend_buttonExtend"
+        android:layout_width="59dp"
+        android:layout_height="20dp"
+        android:background="@android:drawable/arrow_down_float"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/friend_scrollTrips" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
