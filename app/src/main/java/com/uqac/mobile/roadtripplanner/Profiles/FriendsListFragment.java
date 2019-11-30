@@ -1,4 +1,4 @@
-package com.uqac.mobile.roadtripplanner;
+package com.uqac.mobile.roadtripplanner.Profiles;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -13,6 +13,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.uqac.mobile.roadtripplanner.MainActivity;
+import com.uqac.mobile.roadtripplanner.R;
+import com.uqac.mobile.roadtripplanner.SearchUserFragment;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -65,10 +68,15 @@ public class FriendsFragment extends Fragment {
                         {
                             String uid = key.toString();
                             HashMap profileHM = (HashMap)hm.get(key);
-                            String firstName = profileHM.get("firstname").toString();
-                            String lastName = profileHM.get("lastname").toString();
-                            ProfileRef pr = new ProfileRef(uid,lastName,firstName);
-                            listProfiles.add(pr);
+                            Log.d(TAG,"");
+                            if(profileHM.get("firstname") != null && profileHM.get("lastname") != null)
+                            {
+                                String firstName = profileHM.get("firstname").toString();
+                                String lastName = profileHM.get("lastname").toString();
+                                ProfileRef pr = new ProfileRef(uid,lastName,firstName);
+                                listProfiles.add(pr);
+                            }
+
                         }
                     }
                 }

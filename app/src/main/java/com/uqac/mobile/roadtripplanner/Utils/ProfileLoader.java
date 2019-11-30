@@ -1,6 +1,6 @@
 package com.uqac.mobile.roadtripplanner.Utils;
 
-import com.uqac.mobile.roadtripplanner.Profile;
+import com.uqac.mobile.roadtripplanner.Profiles.Profile;
 
 public interface ProfileLoader {
 

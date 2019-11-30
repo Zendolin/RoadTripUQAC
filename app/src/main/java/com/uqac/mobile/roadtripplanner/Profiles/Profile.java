@@ -1,4 +1,4 @@
-package com.uqac.mobile.roadtripplanner;
+package com.uqac.mobile.roadtripplanner.Profiles;
 
 import android.graphics.Bitmap;
 import android.util.Log;
@@ -14,11 +14,14 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.uqac.mobile.roadtripplanner.MyTrip;
+import com.uqac.mobile.roadtripplanner.Stage;
 import com.uqac.mobile.roadtripplanner.Utils.ProfileLoader;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.ListIterator;
 import java.util.Map;
 
 import androidx.annotation.NonNull;
@@ -37,7 +40,7 @@ public class Profile {
     public ArrayList<ProfileRef> friends = new ArrayList<>();
     public ArrayList<MyTrip> trips = new ArrayList<>();
 
-    Profile(FirebaseUser user)
+    public Profile(FirebaseUser user)
     {
         if(user != null)
         {
@@ -46,7 +49,11 @@ public class Profile {
             this.uid = user.getUid();
         }
     }
-    Profile(String email, String firstName, String lastName,String birthDate)
+    public Profile(String uid)
+    {
+        this.uid = uid;
+    }
+    public Profile(String email, String firstName, String lastName,String birthDate)
     {
         this.email =email;
         this.firstName = firstName;
@@ -78,6 +85,16 @@ public class Profile {
         });
     }
 
+    public void RemoveFriend(String uid)
+    {
+        ListIterator<ProfileRef> iter = friends.listIterator();
+        while(iter.hasNext()){
+            if(iter.next().uid.equals(uid)){
+                iter.remove();
+            }
+        }
+        SaveProfile();
+    }
     public void SaveProfile()
     {
         try

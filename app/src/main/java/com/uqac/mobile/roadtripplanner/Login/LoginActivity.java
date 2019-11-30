@@ -1,4 +1,4 @@
-package com.uqac.mobile.roadtripplanner;
+package com.uqac.mobile.roadtripplanner.Login;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -19,11 +19,12 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.uqac.mobile.roadtripplanner.MainActivity;
+import com.uqac.mobile.roadtripplanner.R;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -88,11 +89,19 @@ public class LoginActivity extends AppCompatActivity {
         NewAccountFragment suf = (NewAccountFragment)manager.findFragmentByTag("SIGNUP_FRAGMENT");
         if (lf != null && lf.isVisible()) {
             FragmentTransaction transaction = manager.beginTransaction();
+            transaction.setCustomAnimations(R.anim.fragment_slide_left_enter,
+                    R.anim.fragment_slide_left_exit,
+                    R.anim.fragment_slide_right_enter,
+                    R.anim.fragment_slide_right_exit);
             transaction.replace(R.id.fragmentHolder,new NewAccountFragment(),"SIGNUP_FRAGMENT");
             transaction.commit();
         }
         else if (suf != null && suf.isVisible()) {
             FragmentTransaction transaction = manager.beginTransaction();
+            transaction.setCustomAnimations(R.anim.fragment_slide_left_enter,
+                    R.anim.fragment_slide_left_exit,
+                    R.anim.fragment_slide_right_enter,
+                    R.anim.fragment_slide_right_exit);
             transaction.replace(R.id.fragmentHolder,new LoginFragment(),"LOGIN_FRAGMENT");
             transaction.commit();
         }

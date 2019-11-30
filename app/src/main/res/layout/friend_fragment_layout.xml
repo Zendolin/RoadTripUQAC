@@ -7,4 +7,18 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Search User" />
+
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:id="@+id/friends_container"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- bla bla bla-->
+        </LinearLayout>
+    </ScrollView>
 </LinearLayout>

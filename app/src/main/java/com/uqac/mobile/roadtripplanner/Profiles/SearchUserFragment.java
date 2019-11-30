@@ -1,20 +1,28 @@
-package com.uqac.mobile.roadtripplanner;
+package com.uqac.mobile.roadtripplanner.Profiles;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.SearchView.OnQueryTextListener;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.uqac.mobile.roadtripplanner.MainActivity;
+import com.uqac.mobile.roadtripplanner.Profiles.ProfileRef;
+import com.uqac.mobile.roadtripplanner.R;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import androidx.fragment.app.DialogFragment;
+
+import static com.facebook.FacebookSdk.getApplicationContext;
 
 public class SearchUserFragment extends DialogFragment {
 
@@ -24,7 +32,7 @@ public class SearchUserFragment extends DialogFragment {
     ArrayAdapter<String> adapter;
     ArrayList<ProfileRef> users = new ArrayList<>() ;
     ArrayList<String> userNames = new ArrayList<>() ;
-
+    FriendsListFragment fragList;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
@@ -37,33 +45,39 @@ public class SearchUserFragment extends DialogFragment {
         btn= rootView.findViewById(R.id.searchUser_dismiss);
 
         adapter=new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1,userNames);
-        lv.setAdapter(adapter);
 
+        lv.setAdapter(adapter);
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+            {
+
+                ((MainActivity)getActivity()).profile.friends.add(users.get(position));
+                Toast.makeText(getApplicationContext(), ((TextView) view).getText() + " added to you friends !",Toast.LENGTH_SHORT).show();
+                userNames.remove(userNames.get(position));
+                users.remove(users.get(position));
+                adapter.notifyDataSetChanged();
+                fragList.listFragments();
+            }
+        });
         //SEARCH
         sv.setQueryHint("Search..");
         sv.setOnQueryTextListener(new OnQueryTextListener() {
-
             @Override
             public boolean onQueryTextSubmit(String txt) {
-                // TODO Auto-generated method stub
                 return false;
             }
-
             @Override
             public boolean onQueryTextChange(String txt) {
-                // TODO Auto-generated method stub
                 adapter.getFilter().filter(txt);
                 return false;
             }
         });
-
-        //BUTTON
         btn.setOnClickListener(new OnClickListener() {
 
             @Override
             public void onClick(View arg0) {
-                // TODO Auto-generated method stub
                 dismiss();
+                ((MainActivity)getActivity()).profile.SaveProfile();
             }
         });
 

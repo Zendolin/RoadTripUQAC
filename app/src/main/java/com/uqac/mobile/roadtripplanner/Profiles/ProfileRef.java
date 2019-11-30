@@ -1,4 +1,4 @@
-package com.uqac.mobile.roadtripplanner;
+package com.uqac.mobile.roadtripplanner.Profiles;
 
 public class ProfileRef {
 
@@ -6,7 +6,7 @@ public class ProfileRef {
     public String lastName;
     public String firstName;
 
-    ProfileRef(String uid, String lastName, String firstName)
+    public ProfileRef(String uid, String lastName, String firstName)
     {
         this.uid = uid;
         this.lastName = lastName;
