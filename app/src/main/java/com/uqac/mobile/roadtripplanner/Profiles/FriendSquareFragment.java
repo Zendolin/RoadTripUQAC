@@ -136,7 +136,12 @@ public class FriendSquareFragment extends Fragment implements ProfileLoader {
         if(extend)
         {
             tripContainer.setVisibility(View.VISIBLE);
-            if(profileF.trips.size() >0)
+            int countTrips = 0;
+            for(int i = 0 ; i< profileF.trips.size(); i ++)
+            {
+                if(!profileF.trips.get(i).isPrivate) countTrips+=1;
+            }
+            if(countTrips >0)
             {
                 if(!isAdded()) return;
                 for (Fragment fragment : getChildFragmentManager().getFragments()) {
@@ -146,19 +151,22 @@ public class FriendSquareFragment extends Fragment implements ProfileLoader {
                 }
                 for(int i = 0 ; i< profileF.trips.size();i++)
                 {
-                    MyTripSquareFragment frag = new MyTripSquareFragment();
-                    FragmentManager manager = getChildFragmentManager();
-                    FragmentTransaction transaction = manager.beginTransaction();
-                    transaction.add(R.id.friend_TripsContainer,frag,"MyTripSquare_FRAGMENT");
-                    transaction.commit();
-                    manager.executePendingTransactions();
-                    frag.initMap(i,profileF);
+                    if(!profileF.trips.get(i).isPrivate)
+                    {
+                        MyTripSquareFragment frag = new MyTripSquareFragment();
+                        FragmentManager manager = getChildFragmentManager();
+                        FragmentTransaction transaction = manager.beginTransaction();
+                        transaction.add(R.id.friend_TripsContainer,frag,"MyTripSquare_FRAGMENT");
+                        transaction.commit();
+                        manager.executePendingTransactions();
+                        frag.initMap(i,profileF);
+                    }
                 }
             }
             else
             {
                 TextView txt = new TextView(getActivity());
-                txt.setText("This user has not trips yet !");
+                txt.setText("This user has not public trips yet !");
                 txt.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
                 txt.setWidth(ViewGroup.LayoutParams.MATCH_PARENT);
                 txt.setHeight(60);

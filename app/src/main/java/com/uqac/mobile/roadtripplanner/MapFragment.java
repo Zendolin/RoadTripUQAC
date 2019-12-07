@@ -426,7 +426,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
             alertDiag.setPositiveButton("Save", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
                     try {
-                        MyTrip trip = new MyTrip(profile.uid,edittext.getText().toString(),"","","0",new ArrayList());
+                        MyTrip trip = new MyTrip(profile.uid,edittext.getText().toString(),"","","0",new ArrayList(),false);
                         //TODO Dates
                         Stage st = new Stage(point.latitude,point.longitude,"","");
                         if(trip.listStages == null)      Log.e(TAG, "---listStages NULL");
