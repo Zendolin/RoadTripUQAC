@@ -20,12 +20,10 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.FirebaseNetworkException;
 import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.uqac.mobile.roadtripplanner.MainActivity;
-import com.uqac.mobile.roadtripplanner.MyTrip;
 import com.uqac.mobile.roadtripplanner.R;
 import com.uqac.mobile.roadtripplanner.Utils.ProfileLoader;
 
@@ -143,11 +141,10 @@ public class FriendSquareFragment extends Fragment implements ProfileLoader {
                 if(!isAdded()) return;
                 for (Fragment fragment : getChildFragmentManager().getFragments()) {
                     if(!fragment.isAdded()) return;
-                    if (fragment != null) {
                         getChildFragmentManager().beginTransaction().remove(fragment).commit();
-                    }
+
                 }
-                for(MyTrip t : profileF.trips)
+                for(int i = 0 ; i< profileF.trips.size();i++)
                 {
                     MyTripSquareFragment frag = new MyTripSquareFragment();
                     FragmentManager manager = getChildFragmentManager();
@@ -155,7 +152,7 @@ public class FriendSquareFragment extends Fragment implements ProfileLoader {
                     transaction.add(R.id.friend_TripsContainer,frag,"MyTripSquare_FRAGMENT");
                     transaction.commit();
                     manager.executePendingTransactions();
-                    frag.initMap(t);
+                    frag.initMap(i,profileF);
                 }
             }
             else

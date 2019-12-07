@@ -257,7 +257,7 @@ public class ProfileFragment extends Fragment implements ProfileLoader {
                 getChildFragmentManager().beginTransaction().remove(fragment).commit();
             }
         }
-        for(MyTrip t : profile.trips)
+        for(int i = 0 ; i < profile.trips.size();i++)
         {
             MyTripSquareFragment frag = new MyTripSquareFragment();
             FragmentManager manager = getChildFragmentManager();
@@ -266,7 +266,7 @@ public class ProfileFragment extends Fragment implements ProfileLoader {
             transaction.commit();
             manager.executePendingTransactions();
 
-            frag.initMap(t);
+            frag.initMap(i,profile);
         }
     }
 

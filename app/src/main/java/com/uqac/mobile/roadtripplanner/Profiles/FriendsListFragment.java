@@ -1,11 +1,13 @@
 package com.uqac.mobile.roadtripplanner.Profiles;
 
 import android.os.Bundle;
+import android.text.Layout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -25,6 +27,7 @@ import androidx.fragment.app.FragmentTransaction;
 public class FriendsListFragment extends Fragment {
 
     private static String TAG = "----------RoadTrip Planner-------------";
+    private LinearLayout container;
     private Button btn;
     private Profile profile;
     @Override
@@ -32,6 +35,7 @@ public class FriendsListFragment extends Fragment {
     {
         View view = inflater.inflate(R.layout.friend_fragment_layout, container, false);
         btn = view.findViewById(R.id.friends_btnSearch);
+        this.container = view.findViewById(R.id.friends_container);
         final FragmentManager fm=getFragmentManager();
         final SearchUserFragment searchFrag =  new SearchUserFragment();
         searchFrag.fragList = this;
@@ -93,6 +97,7 @@ public class FriendsListFragment extends Fragment {
     }
     public void listFragments()
     {
+        container.removeAllViews();
         for(ProfileRef pr : profile.friends)
         {
             FriendSquareFragment frag = new FriendSquareFragment();
