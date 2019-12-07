@@ -146,7 +146,8 @@ public class Profile {
                         String uid = hm.get("ownerUID").toString();
                         String startDate = hm.get("startDate").toString();
                         ArrayList<String> likesUID = (ArrayList) hm.get("likesUID");
-                        MyTrip mt = new MyTrip(uid,tripName,startDate,endDate,likeCount,likesUID);
+                        Boolean isPrivate = (boolean)hm.get("isPrivate");
+                        MyTrip mt = new MyTrip(uid,tripName,startDate,endDate,likeCount,likesUID,isPrivate);
 
                         ArrayList<HashMap> stages= (ArrayList<HashMap> )hm.get("listStages");
                         for(HashMap hmStage : stages)

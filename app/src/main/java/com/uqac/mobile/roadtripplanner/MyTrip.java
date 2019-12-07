@@ -12,8 +12,9 @@ public class MyTrip {
     public ArrayList<Stage> listStages;
     public String startDate;
     public String endDate;
+    public boolean isPrivate;
 
-    public MyTrip(String uid,String tripName,String startDate,String endDate,String likeCount,ArrayList likes)
+    public MyTrip(String uid,String tripName,String startDate,String endDate,String likeCount,ArrayList likes,boolean isPrivate)
     {
         listStages = new ArrayList<>();
         likesUID = new ArrayList<>();
@@ -23,6 +24,7 @@ public class MyTrip {
         this.startDate = startDate;
         this.endDate = endDate;
         this.likesUID = likes;
+        this.isPrivate = isPrivate;
     }
 
 }

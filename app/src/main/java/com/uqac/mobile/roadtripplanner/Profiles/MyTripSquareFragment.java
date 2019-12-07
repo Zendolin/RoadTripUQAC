@@ -18,7 +18,6 @@ import com.uqac.mobile.roadtripplanner.MainActivity;
 import com.uqac.mobile.roadtripplanner.MyTrip;
 import com.uqac.mobile.roadtripplanner.R;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import androidx.fragment.app.Fragment;
@@ -31,6 +30,7 @@ public class MyTripSquareFragment extends Fragment  implements OnMapReadyCallbac
     private GoogleMap mMap;
     private Profile userProfile;
     private ImageView likeImage;
+    private ImageView lockImage;
     private TextView likeText;
     private Profile owner;
     private int index;
@@ -39,6 +39,7 @@ public class MyTripSquareFragment extends Fragment  implements OnMapReadyCallbac
     {
         View view = inflater.inflate(R.layout.mytrip_square_fragment_layout, container, false);
         likeImage = view.findViewById(R.id.myTripSquare_LikeImage);
+        lockImage = view.findViewById(R.id.myTripSquare_LockImage);
         likeText = view.findViewById(R.id.myTripSquare_LikeScore);
         return view;
     }
@@ -55,14 +56,35 @@ public class MyTripSquareFragment extends Fragment  implements OnMapReadyCallbac
         if(!m.tripName.isEmpty()) textTripName.setText(m.tripName);
         mapFragment.getMapAsync(this);
 
+        lockImage.setVisibility(View.VISIBLE);
         likeText.setText( m.likeCount);
         if(this.owner.uid.equals(userProfile.uid)) // own trip
         {
             Drawable d = getResources().getDrawable(R.drawable.like_full);
             likeImage.setImageDrawable(d);
+            if(m.isPrivate)
+            {
+                Drawable dLock = getResources().getDrawable(R.drawable.lockclose);
+                lockImage.setImageDrawable(dLock);
+            }
+            else
+            {
+                Drawable dLock = getResources().getDrawable(R.drawable.lockopen);
+                lockImage.setImageDrawable(dLock);
+            }
+            lockImage.setOnClickListener(new View.OnClickListener()
+            {
+                @Override
+                public void onClick(View v)
+                {
+                    Log.d(TAG,"---Click lock");
+                    ClickLock();
+                }
+            });
         }
         else // friend trip
         {
+            lockImage.setVisibility(View.GONE);
             if(m.likesUID == null )
             {
                 m.likesUID = new ArrayList<>();
@@ -87,6 +109,7 @@ public class MyTripSquareFragment extends Fragment  implements OnMapReadyCallbac
                     ClickLike();
                 }
             });
+
         }
     }
     private void ClickLike()
@@ -118,7 +141,24 @@ public class MyTripSquareFragment extends Fragment  implements OnMapReadyCallbac
         owner.SaveProfile();
         likeText.setText( m.likeCount);
     }
-
+    private void ClickLock()
+    {
+        MyTrip m = owner.trips.get(index);
+        if(m.isPrivate)
+        {
+            m.isPrivate = false;
+            owner.SaveProfile();
+            Drawable dLock = getResources().getDrawable(R.drawable.lockopen);
+            lockImage.setImageDrawable(dLock);
+        }
+        else
+        {
+            m.isPrivate = true;
+            owner.SaveProfile();
+            Drawable dLock = getResources().getDrawable(R.drawable.lockclose);
+            lockImage.setImageDrawable(dLock);
+        }
+    }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {

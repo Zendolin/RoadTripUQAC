@@ -45,6 +45,18 @@
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/like_full" />
 
+        <ImageButton
+            android:id="@+id/myTripSquare_LockImage"
+            android:layout_width="47dp"
+            android:layout_height="28dp"
+            android:layout_marginTop="6dp"
+            android:layout_marginEnd="8dp"
+            android:background="@android:color/white"
+            android:scaleType="fitXY"
+            app:layout_constraintEnd_toStartOf="@+id/myTripSquare_LikeScore"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/lockopen" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <fragment
