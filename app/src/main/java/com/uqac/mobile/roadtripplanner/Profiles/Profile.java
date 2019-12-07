@@ -110,6 +110,7 @@ public class Profile {
             userData.put("friends",this.friends);
             userData.put("trips",this.trips);
             reference.updateChildren(userData);
+            Log.d(TAG,"Save profile Likes :" + this.trips.get(0).likeCount);
         }
        catch (Exception e)
        {
@@ -144,7 +145,8 @@ public class Profile {
                         String tripName = hm.get("tripName").toString();
                         String uid = hm.get("ownerUID").toString();
                         String startDate = hm.get("startDate").toString();
-                        MyTrip mt = new MyTrip(uid,tripName,startDate,endDate,likeCount);
+                        ArrayList<String> likesUID = (ArrayList) hm.get("likesUID");
+                        MyTrip mt = new MyTrip(uid,tripName,startDate,endDate,likeCount,likesUID);
 
                         ArrayList<HashMap> stages= (ArrayList<HashMap> )hm.get("listStages");
                         for(HashMap hmStage : stages)
