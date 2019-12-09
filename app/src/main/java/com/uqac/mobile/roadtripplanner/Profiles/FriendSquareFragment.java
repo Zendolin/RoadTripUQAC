@@ -47,6 +47,14 @@ public class FriendSquareFragment extends Fragment implements ProfileLoader {
     private LinearLayout tripContainer;
     private Button buttonExtend;
     private Button buttonDelete;
+
+    private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 9003;
+    private static final int PERMISSIONS_REQUEST_ENABLE_GPS = 9002;
+    private static final int ERROR_DIALOG_REQUEST = 9001;
+    private static final float DEFAULT_ZOOM = 15;
+    private static final String MY_LOCATION = "MY_LOCATION";
+    private static final String DIRECTION_MODE = "driving";
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {

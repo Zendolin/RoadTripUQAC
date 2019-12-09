@@ -1,10 +1,9 @@
-package com.uqac.mobile.roadtripplanner;
+package com.uqac.mobile.roadtripplanner.Maps;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -29,7 +28,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.uqac.mobile.roadtripplanner.Adapters.PlacesAdapter;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
+import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.ApiException;
@@ -51,51 +54,65 @@ import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.net.FetchPlaceRequest;
 import com.google.android.libraries.places.api.net.FetchPlaceResponse;
 import com.google.android.libraries.places.api.net.PlacesClient;
+import com.uqac.mobile.roadtripplanner.Helpers.FetchURL;
+import com.uqac.mobile.roadtripplanner.Helpers.TaskLoadedCallback;
+import com.uqac.mobile.roadtripplanner.MainActivity;
+import com.uqac.mobile.roadtripplanner.MyTrip;
 import com.uqac.mobile.roadtripplanner.Profiles.Profile;
+import com.uqac.mobile.roadtripplanner.R;
+import com.uqac.mobile.roadtripplanner.Stage;
 
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.uqac.mobile.roadtripplanner.Utils.Constants.DEFAULT_ZOOM;
-import static com.uqac.mobile.roadtripplanner.Utils.Constants.ERROR_DIALOG_REQUEST;
-import static com.uqac.mobile.roadtripplanner.Utils.Constants.MY_LOCATION;
-import static com.uqac.mobile.roadtripplanner.Utils.Constants.PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION;
-import static com.uqac.mobile.roadtripplanner.Utils.Constants.PERMISSIONS_REQUEST_ENABLE_GPS;
+import static android.Manifest.permission.ACCESS_FINE_LOCATION;
+import static com.uqac.mobile.roadtripplanner.Maps.DestinationMatrixTask.SEPARATOR;
 
-
-public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener {
+public class MapFragment extends Fragment implements OnMapReadyCallback, TaskLoadedCallback, DestinationMatrixCallback, GoogleApiClient.OnConnectionFailedListener {
 
     private static final String TAG = "MapFragment";
-    private ArrayList<Place> places = new ArrayList<>();
+    View view;
     private GoogleMap mMap;
     private boolean mLocationPermissionGranted = false;
     private FusedLocationProviderClient mFusedLocationProviderClient;
     //private GoogleApiClient googleApiClient;
     PlacesClient placesClient;
+    private ArrayList<Polyline> polylines;
+    private Polyline currentPolyline;
     SupportMapFragment mapFragment;
-
     AutoCompleteTextView searchText;
     ImageView gps;
     Profile profile;
     //ImageView imageView;
     //ListView listOfDestinations;
 
-    PlacesAdapter listOfDestinationsAdapter;
+
     ImageView imageDelete;
     ImageView imageSave;
     ImageView imageStart;
 
     LatLng point;
+    private ImageView add_place;
+    private Place currentPlace = null;
 
+    //tests -----------------
+    private static final List<Place.Field> placeFields = Arrays.asList(Place.Field.ID, Place.Field.LAT_LNG, Place.Field.NAME, Place.Field.PHOTO_METADATAS, Place.Field.ADDRESS_COMPONENTS);
+
+    private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 9003;
+    private static final int PERMISSIONS_REQUEST_ENABLE_GPS = 9002;
+    private static final int ERROR_DIALOG_REQUEST = 9001;
+    private static final float DEFAULT_ZOOM = 15;
+    private static final String MY_LOCATION = "MY_LOCATION";
+    private static final String DIRECTION_MODE = "driving";
+    // ------------
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        View view = inflater.inflate(R.layout.map_fragment_layout, container, false);
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-      /*  SupportMapFragment mapFragment = (SupportMapFragment) getActivity().getSupportFragmentManager()
-                .findFragmentById(R.id.map);*/
+        view = inflater.inflate(R.layout.map_fragment_layout, container, false);
         mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
         gps = view.findViewById(R.id.ic_gps);
@@ -105,6 +122,20 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
                 onClickGps(v);
             }
         });
+
+
+        placesClient = Places.createClient(getActivity());
+
+        // Initialize the AutocompleteSupportFragment.
+        AutocompleteSupportFragment autocompleteFragment = (AutocompleteSupportFragment)getChildFragmentManager().findFragmentById(R.id.autocomplete_fragment);
+
+        // Specify the types of place data to return.
+        autocompleteFragment.setPlaceFields(placeFields);
+
+        // Set up a PlaceSelectionListener to handle the response.
+        autocompleteFragment.setOnPlaceSelectedListener(new CustomPlaceSelectionListener());
+
+        add_place = view.findViewById(R.id.ic_add_place);
 
         //getProfileData();
         imageDelete = view.findViewById(R.id.image_map_deletePoint);
@@ -125,99 +156,23 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
         imageStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               /* //GO VERS DatePickerFragment
-                // Create new fragment and transaction
-
-                FragmentTransaction transaction = getFragmentManager().beginTransaction();
-
-                // Replace whatever is in the fragment_container view with this fragment,
-                // and add the transaction to the back stack
-                transaction.replace(R.id.ContentLayout, new DatePickerFragment(), "DatepickerFragment");
-                transaction.addToBackStack(null);
-
-                // Commit the transaction
-                transaction.commit();*/
                 DatePickerFragment newFragment = new DatePickerFragment();
                 ((MainActivity) getActivity()).changeFragment(newFragment, "dataFragment");
 
             }
         });
-        //Intent intent = new Intent(this, PlacesActivity.class);
-        //Intent intent = new Intent(this, RoadsActivity.class);
-        //startActivity(intent);
+
         String apiKey = getString(R.string.google_maps_key);
 
         if (!Places.isInitialized()) {
             Places.initialize(getActivity().getApplicationContext(), apiKey);
         }
         placesClient = Places.createClient(this.getActivity().getApplicationContext());
-        searchText = view.findViewById(R.id.input_search);
         gps = view.findViewById(R.id.ic_gps);
 
         getLocationPermission();
         profile = ((MainActivity)getActivity()).profile;
-        /*final AutocompleteSupportFragment autocompleteSupportFragment = (AutocompleteSupportFragment) getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment);
 
-        autocompleteSupportFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.LAT_LNG, Place.Field.NAME, Place.Field.PHOTO_METADATAS));
-        autocompleteSupportFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
-            @Override
-            public void onPlaceSelected(@NonNull Place place) {
-                final LatLng latLng = place.getLatLng();
-
-                Log.i("PlacesAPI", "onPlaceSelected: Latitude : " + latLng.latitude + ", Longitude : " + latLng.longitude);
-                Log.i("PlacesAPI", "onPlaceSelected: Place ID : " + place.getId());
-
-                updateListOfDestinations(place);
-                moveToDestination(place);
-
-
-                // get photos
-                if( place.getPhotoMetadatas() !=  null){
-                    for(PhotoMetadata photoMetadata : place.getPhotoMetadatas()){
-                        Log.i("PlacesAPI", "onPlaceSelected: PhotoMetadata : " + photoMetadata);
-                    }
-                }
-                PhotoMetadata photoMetadata = place.getPhotoMetadatas().get(0);
-                String attributions = photoMetadata.getAttributions();
-
-                FetchPhotoRequest photoRequest = FetchPhotoRequest.builder(photoMetadata)
-                        .setMaxWidth(500) // Optional.
-                        .setMaxHeight(300) // Optional.
-                        .build();
-
-                placesClient.fetchPhoto(photoRequest).addOnSuccessListener(new OnSuccessListener<FetchPhotoResponse>() {
-                    @Override
-                    public void onSuccess(FetchPhotoResponse fetchPhotoResponse) {
-                        // temporaire
-                        ImageView imageView = (ImageView) findViewById(R.id.places_image);
-                        Bitmap bitmap = fetchPhotoResponse.getBitmap();
-                        imageView.setImageBitmap(bitmap);
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception exception) {
-                        if (exception instanceof ApiException) {
-                            ApiException apiException = (ApiException) exception;
-                            int statusCode = apiException.getStatusCode();
-                            // Handle error with given status code.
-                            Log.e("PlacesAPI", "Place not found: " + exception.getMessage());
-                        }
-                    }
-                });
-
-            }
-
-            @Override
-            public void onError(@NonNull Status status) {
-
-            }
-
-        });
-
-        listOfDestinations = (ListView) findViewById(R.id.desinations);
-        listOfDestinationsAdapter = new PlacesAdapter(this, places);
-        listOfDestinations.setAdapter(listOfDestinationsAdapter);
-        */
         return view;
     }
 
@@ -225,7 +180,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
     }
-
     public void onClickGps(View view) {
         getDeviceLocation();
     }
@@ -270,7 +224,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
     }
 
     private void buildAlertMessageNoGps() {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(this.getActivity());
+        final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setMessage("This application requires GPS to work properly, do you want to enable it?")
                 .setCancelable(false)
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
@@ -300,13 +254,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
          * onRequestPermissionsResult.
          */
         if (ContextCompat.checkSelfPermission(getActivity().getApplicationContext(),
-                android.Manifest.permission.ACCESS_FINE_LOCATION)
+                ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
             mLocationPermissionGranted = true;
             //getChatrooms();
         } else {
-            ActivityCompat.requestPermissions(this.getActivity(),
-                    new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+            ActivityCompat.requestPermissions(getActivity(),
+                    new String[]{ACCESS_FINE_LOCATION},
                     PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
         }
     }
@@ -314,7 +268,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
     public boolean isServicesOK() {
         Log.d(TAG, "isServicesOK: checking google services version");
 
-        int available = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this.getActivity());
+        int available = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(getActivity());
 
         if (available == ConnectionResult.SUCCESS) {
             //everything is fine and the user can make map requests
@@ -323,16 +277,16 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
         } else if (GoogleApiAvailability.getInstance().isUserResolvableError(available)) {
             //an error occured but we can resolve it
             Log.d(TAG, "isServicesOK: an error occured but we can fix it");
-            Dialog dialog = GoogleApiAvailability.getInstance().getErrorDialog(this.getActivity(), available, ERROR_DIALOG_REQUEST);
+            Dialog dialog = GoogleApiAvailability.getInstance().getErrorDialog(getActivity(), available, ERROR_DIALOG_REQUEST);
             dialog.show();
         } else {
-            //Toast.makeText(this, "You can't make map requests", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "You can't make map requests", Toast.LENGTH_SHORT).show();
         }
         return false;
     }
 
     private void getDeviceLocation() {
-        mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this.getActivity());
+        mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getActivity());
         try {
             if (mLocationPermissionGranted) {
                 final Task location = mFusedLocationProviderClient.getLastLocation();
@@ -341,7 +295,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
                     public void onComplete(@NonNull Task task) {
                         if (task.isSuccessful()) {
                             Location currentLocation = (Location) task.getResult();
-                            moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), DEFAULT_ZOOM, MY_LOCATION);
+                            LatLng latlng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
+                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latlng, DEFAULT_ZOOM));
+
+                            /*
+                            MarkerOptions options = new MarkerOptions().position(latlng).title(MY_LOCATION);
+                            mMap.addMarker(options);
+                             */
                         } else {
                             Log.d(TAG, "onComplete: current location is null");
                         }
@@ -352,6 +312,80 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
             Log.e(TAG, "getDeviceLocation: SecurityException : " + e.getMessage());
         }
     }
+
+    public void onClickAddPlace(View view) {
+        ((MainActivity)getActivity()).places.add(currentPlace);
+        ((MainActivity)getActivity()).listOfDestinationsAdapter.notifyDataSetChanged();
+        Log.d(TAG, "onClickAddPlace: places.size() = " +   ((MainActivity)getActivity()).places.size());
+        if (  ((MainActivity)getActivity()).places.size() > 1) {
+            drawPath();
+        }
+    }
+
+    public void onClickNavToGallery(View view) {
+        GalleryFragment galleryFragment = new GalleryFragment();
+        replaceFragment(galleryFragment);
+    }
+
+
+    public void replaceFragment(Fragment someFragment) {
+        FragmentManager manager = getActivity().getSupportFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+        transaction.replace(R.id.nav_host_fragment, someFragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
+    }
+
+    private void drawPath() {
+        Log.d(TAG, "drawPath: path drawing");
+
+        for (int position = 1; position <   ((MainActivity)getActivity()).places.size(); position++) {
+            LatLng origin =   ((MainActivity)getActivity()).places.get(position - 1).getLatLng();
+            LatLng destination =   ((MainActivity)getActivity()).places.get(position).getLatLng();
+
+            String url = getUrl(origin, destination, DIRECTION_MODE);
+
+            new FetchURL(getContext()).execute(url, DIRECTION_MODE);
+        }
+    }
+
+    private void calculatePathLowestDistance() {
+        //TODO get lower distances between places using distance matric
+        String url = "https://maps.googleapis.com/maps/api/distancematrix/json?origins=Vancouver+BC&destinations=San+Francisco&mode=" + DIRECTION_MODE + " &language=fr-FR&key=" + getString(R.string.roads_api_key);
+        new DestinationMatrixTask(getActivity()).execute(url);
+    }
+
+    private void calculatePathLowestTime() {
+        //TODO get lower time between places using distance matric
+    }
+
+    private String getUrl(LatLng origin, LatLng dest, String directionMode) {
+        // Origin of route
+        String str_origin = "origin=" + origin.latitude + "," + origin.longitude;
+        // Destination of route
+        String str_dest = "destination=" + dest.latitude + "," + dest.longitude;
+        // Mode
+        String mode = "mode=" + directionMode;
+        // Building the parameters to the web service
+        String parameters = str_origin + "&" + str_dest + "&" + mode;
+        // Output format
+        String output = "json";
+        // Building the url to the web service
+        return "https://maps.googleapis.com/maps/api/directions/" + output + "?" + parameters + "&key=" + getString(R.string.roads_api_key);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (checkMapServices()) {
+            if (mLocationPermissionGranted) {
+                //TODO: use application
+            } else {
+                getLocationPermission();
+            }
+        }
+    }
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
@@ -388,6 +422,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        add_place.setVisibility(View.INVISIBLE);
         if (mLocationPermissionGranted) {
             getDeviceLocation();
             mMap.setMyLocationEnabled(true);
@@ -454,18 +489,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
         } else Log.d(TAG, "---------------Saved point is null-------");
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (checkMapServices()) {
-            if (mLocationPermissionGranted) {
-                //TODO: use application
-            } else {
-                getLocationPermission();
-            }
-        }
-    }
-
     private void moveCamera(LatLng latLng, float zoom, String title) {
         Log.d(TAG, "moveCamera: moving the camera to lat " + latLng.latitude + " | lng " + latLng.longitude);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
@@ -485,8 +508,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
 
     public void updateListOfDestinations(Place place) {
         Log.i("updateList", "list updated");
-        places.add(place);
-        listOfDestinationsAdapter.notifyDataSetChanged();
+        ((MainActivity)getActivity()).places.add(place);
+        ((MainActivity)getActivity()).listOfDestinationsAdapter.notifyDataSetChanged();
 
     }
 
@@ -494,7 +517,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
         if (this.getActivity().getWindow() != null) {
             this.getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         }
-
     }
 
     private void logPlacesData(String placeId) {
@@ -524,7 +546,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
                 }
             }
         });
-
+        /*
         searchText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
@@ -538,31 +560,42 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
                 }
                 return false;
             }
-        });
+        });*/
     }
-/*
-    private void getProfileData() {
-        final DatabaseReference reference = FirebaseDatabase.getInstance().getReference("users");
-        reference.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                Log.d(TAG, "-----data found !------");
-                if (dataSnapshot.child("email").getValue() != null)
-                    profile.email = dataSnapshot.child("email").getValue().toString();
-                if (dataSnapshot.child("lastname").getValue() != null)
-                    profile.lastName = dataSnapshot.child("lastname").getValue().toString();
-                if (dataSnapshot.child("firstname").getValue() != null)
-                    profile.firstName = dataSnapshot.child("firstname").getValue().toString();
-                if (dataSnapshot.child("birthdate").getValue() != null)
-                    profile.birthDate = dataSnapshot.child("birthdate").getValue().toString();
-                if (dataSnapshot.child("countSavedTrips").getValue() != null)
-                    profile.countSavedTrips = dataSnapshot.child("countSavedTrips").getValue().toString();
-                Log.d(TAG, "---Profile get  , count : " + profile.countSavedTrips+"---");
-            }
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.d(TAG, "-----" + databaseError.getMessage() + "----");
-            }
-        });
-    }*/
+
+    @Override
+    public void onTaskDone(Object... values) {
+        mMap.addPolyline((PolylineOptions) values[0]);
+    }
+
+    @Override
+    public void onTaskDone(String result) {
+        String[] res = result.split(SEPARATOR);
+        double min = Double.parseDouble(res[0]) / 60;
+        int dist = Integer.parseInt(res[1]) / 1000;
+        String origin = res[2];
+        String destination = res[3];
+        Log.d(TAG, "setDouble: Duration    = " + (int) (min / 60) + " hr " + (int) (min % 60) + " mins");
+        Log.d(TAG, "setDouble: Distance    = " + dist + " kilometers");
+        Log.d(TAG, "setDouble: Origin      = " + origin);
+        Log.d(TAG, "setDouble: Destination = " + destination);
+    }
+
+    public class CustomPlaceSelectionListener implements PlaceSelectionListener
+    {
+        @Override
+        public void onPlaceSelected(Place place) {
+            // TODO: Get info about the selected place.
+            Log.i(TAG, "Place: " + place.getName() + ", " + place.getId());
+            currentPlace = place;
+            add_place.setVisibility(View.VISIBLE);
+            moveToDestination(place);
+        }
+
+        @Override
+        public void onError(Status status) {
+            // TODO: Handle the error.
+            Log.i(TAG, "An error occurred: " + status);
+        }
+    }
 }

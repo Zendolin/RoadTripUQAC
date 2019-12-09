@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.uqac.mobile.roadtripplanner.Maps.MapFragment;
 import com.uqac.mobile.roadtripplanner.Profiles.FriendsListFragment;
 import com.uqac.mobile.roadtripplanner.Profiles.MyTripSquareFragment;
 import com.uqac.mobile.roadtripplanner.Profiles.ProfileFragment;

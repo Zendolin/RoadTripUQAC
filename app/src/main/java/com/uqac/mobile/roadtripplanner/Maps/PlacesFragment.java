@@ -1,4 +1,4 @@
-package com.uqac.mobile.roadtripplanner;
+package com.uqac.mobile.roadtripplanner.Maps;
 
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -25,6 +25,7 @@ import com.google.android.libraries.places.api.net.FetchPhotoResponse;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
+import com.uqac.mobile.roadtripplanner.R;
 
 import java.util.Arrays;
 

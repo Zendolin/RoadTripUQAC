@@ -1,4 +1,4 @@
-package com.example.pocroadtrip.Helpers;
+package com.uqac.mobile.roadtripplanner.Helpers;
 
 import com.google.android.gms.maps.model.LatLng;
 

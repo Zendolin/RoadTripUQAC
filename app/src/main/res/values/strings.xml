@@ -6,4 +6,17 @@
     <string name="title_activity_places">Places</string>
     <string name="title_activity_roads">Roads</string>
     <string name="get_direction">Get direction</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="menu_send">Send</string>
+    <string name="group_communicate">Communicate</string>
+    <string name="menu_map">Map</string>
+
+    <string name="test1">Home</string>
+    <string name="test2">Gallery</string>
 </resources>
