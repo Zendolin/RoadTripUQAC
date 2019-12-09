@@ -1,4 +1,4 @@
-package com.example.pocroadtrip.Helpers;
+package com.uqac.mobile.roadtripplanner.Helpers;
 
 
 import android.content.Context;

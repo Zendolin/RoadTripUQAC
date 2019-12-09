@@ -8,9 +8,8 @@ import android.widget.Button;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.pocroadtrip.Helpers.FetchURL;
-import com.example.pocroadtrip.Helpers.TaskLoadedCallback;
-import com.uqac.mobile.roadtripplanner.R;
+import com.uqac.mobile.roadtripplanner.Helpers.FetchURL;
+import com.uqac.mobile.roadtripplanner.Helpers.TaskLoadedCallback;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
