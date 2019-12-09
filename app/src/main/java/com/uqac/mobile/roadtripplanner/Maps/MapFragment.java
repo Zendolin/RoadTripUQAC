@@ -25,6 +25,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -54,6 +55,7 @@ import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.net.FetchPlaceRequest;
 import com.google.android.libraries.places.api.net.FetchPlaceResponse;
 import com.google.android.libraries.places.api.net.PlacesClient;
+import com.uqac.mobile.roadtripplanner.Adapters.PlacesAdapter;
 import com.uqac.mobile.roadtripplanner.Helpers.FetchURL;
 import com.uqac.mobile.roadtripplanner.Helpers.TaskLoadedCallback;
 import com.uqac.mobile.roadtripplanner.MainActivity;
@@ -65,6 +67,7 @@ import com.uqac.mobile.roadtripplanner.Stage;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -94,9 +97,26 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, TaskLoa
     ImageView imageDelete;
     ImageView imageSave;
     ImageView imageStart;
+    ImageView btnAddplace;
 
-    LatLng point;
-    private ImageView add_place;
+
+    ArrayList<LatLng> points;
+    public ListView listViewPlaces;
+    public PlacesAdapter listOfDestinationsAdapter;
+    public ArrayList<Place> places = new ArrayList<>();
+    public static final ArrayList<CustomPlace> customPlaces = new ArrayList<CustomPlace>() {{
+        add(new CustomPlace("ChIJxV_wEQXq9EcRBeX_IoA7ni8", 1));  // 98 Rue Pierre Delore
+        add(new CustomPlace("ChIJw2ApS2Lq9EcR2JcI3dAd_Z0", 4));  // La Part-Dieu
+        add(new CustomPlace("ChIJ63wTk7Tr9EcRj8YR3uS-ipI", 3));  // Gare Perrache
+        add(new CustomPlace("ChIJ7f6Dys7r9EcRI-pprZzom-8", 2));  // Confluence
+        add(new CustomPlace("ChIJs1rce1Pq9EcRRyCL9YWTnV0", 5));  // Place Bellecour
+        add(new CustomPlace("ChIJK1Jxdanr9EcRKY5nG3nMG50", 6));  // La Basilique Notre Dame de Fourvière
+        add(new CustomPlace("ChIJ73nFsh7r9EcRrdSxtummQq0", 7));  // La Croix-Rousse
+        add(new CustomPlace("ChIJueG9dwLr9EcRwxc0xFwTgoU", 8));  // Amphithéatre des trois Gaules
+        add(new CustomPlace("ChIJ2Vs5bH3p9EcRC8vPyuGlX7s", 9));  // Aquarium of Lyon
+
+        //add(new CustomPlace("ChIJD7fiBh9u5kcRYJSMaMOCCwQ"));   // Paris
+    }};
     private Place currentPlace = null;
 
     //tests -----------------
@@ -122,7 +142,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, TaskLoa
                 onClickGps(v);
             }
         });
-
+        points = new ArrayList<>();
 
         placesClient = Places.createClient(getActivity());
 
@@ -135,9 +155,15 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, TaskLoa
         // Set up a PlaceSelectionListener to handle the response.
         autocompleteFragment.setOnPlaceSelectedListener(new CustomPlaceSelectionListener());
 
-        add_place = view.findViewById(R.id.ic_add_place);
-
         //getProfileData();
+        btnAddplace = view.findViewById(R.id.ic_add_place);
+        Log.d(TAG,"#--" + btnAddplace);
+        btnAddplace.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onClickAddPlace(v);
+            }
+        });
         imageDelete = view.findViewById(R.id.image_map_deletePoint);
         imageDelete.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -172,7 +198,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, TaskLoa
 
         getLocationPermission();
         profile = ((MainActivity)getActivity()).profile;
-
+        listOfDestinationsAdapter = new PlacesAdapter(getActivity(), places);
         return view;
     }
 
@@ -314,12 +340,15 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, TaskLoa
     }
 
     public void onClickAddPlace(View view) {
-        ((MainActivity)getActivity()).places.add(currentPlace);
-        ((MainActivity)getActivity()).listOfDestinationsAdapter.notifyDataSetChanged();
-        Log.d(TAG, "onClickAddPlace: places.size() = " +   ((MainActivity)getActivity()).places.size());
-        if (  ((MainActivity)getActivity()).places.size() > 1) {
+       places.add(currentPlace);
+       listOfDestinationsAdapter.notifyDataSetChanged();
+        Log.d(TAG, "onClickAddPlace: places.size() = " + places.size());
+        if ( places.size() > 1) {
             drawPath();
+
         }
+        imageDelete.setVisibility(View.VISIBLE);
+        imageSave.setVisibility(View.VISIBLE);
     }
 
     public void onClickNavToGallery(View view) {
@@ -337,15 +366,15 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, TaskLoa
     }
 
     private void drawPath() {
+        Log.d(TAG,"#-----" + places.size());
         Log.d(TAG, "drawPath: path drawing");
-
-        for (int position = 1; position <   ((MainActivity)getActivity()).places.size(); position++) {
-            LatLng origin =   ((MainActivity)getActivity()).places.get(position - 1).getLatLng();
-            LatLng destination =   ((MainActivity)getActivity()).places.get(position).getLatLng();
+        for (int position = 1; position <   places.size(); position++) {
+            LatLng origin =   places.get(position - 1).getLatLng();
+            LatLng destination =  places.get(position).getLatLng();
 
             String url = getUrl(origin, destination, DIRECTION_MODE);
 
-            new FetchURL(getContext()).execute(url, DIRECTION_MODE);
+            new FetchURL(this).execute(url, DIRECTION_MODE);
         }
     }
 
@@ -422,37 +451,36 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, TaskLoa
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        add_place.setVisibility(View.INVISIBLE);
+        btnAddplace.setVisibility(View.INVISIBLE);
         if (mLocationPermissionGranted) {
             getDeviceLocation();
             mMap.setMyLocationEnabled(true);
             // Disable the default button
             mMap.getUiSettings().setMyLocationButtonEnabled(false);
 
-            init();
+            init();/*
             mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
                 @Override
                 public void onMapClick(LatLng p) {
                     //allPoints.add(point);
-                    point = p;
-                    mMap.clear();
-                    mMap.addMarker(new MarkerOptions().position(point));
+                    points.add(p);
+                    mMap.addMarker(new MarkerOptions().position(p));
                     imageDelete.setVisibility(View.VISIBLE);
                     imageSave.setVisibility(View.VISIBLE);
                 }
-            });
+            });*/
         }
     }
 
     private void deletePoint() {
         mMap.clear();
-        point = null;
+        points = new ArrayList<LatLng>();
         imageDelete.setVisibility(View.INVISIBLE);
         imageSave.setVisibility(View.INVISIBLE);
     }
 
     private void saveLocation() {
-        if (point != null) {
+        if (places.size() > 0) {
             AlertDialog.Builder alertDiag = new AlertDialog.Builder(getActivity());
             final EditText edittext = new EditText(getActivity());
             alertDiag.setMessage("Choose a name for your trip");
@@ -463,10 +491,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, TaskLoa
                     try {
                         MyTrip trip = new MyTrip(profile.uid,edittext.getText().toString(),"","","0",new ArrayList(),false);
                         //TODO Dates
-                        Stage st = new Stage(point.latitude,point.longitude,"","");
-                        if(trip.listStages == null)      Log.e(TAG, "---listStages NULL");
-                        trip.listStages.add(st);
-                        if( profile.trips == null)      Log.e(TAG, "---profile List NULL");
+                        for(Place p : places)
+                        {
+                            LatLng l = p.getLatLng();
+                            Stage st = new Stage(p.getName(),l.latitude,l.longitude,"","");
+                            trip.listStages.add(st);
+                        }
                         profile.trips.add(trip);
                         profile.SaveProfile();
                         Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Location saved !", Toast.LENGTH_LONG);
@@ -508,8 +538,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, TaskLoa
 
     public void updateListOfDestinations(Place place) {
         Log.i("updateList", "list updated");
-        ((MainActivity)getActivity()).places.add(place);
-        ((MainActivity)getActivity()).listOfDestinationsAdapter.notifyDataSetChanged();
+        places.add(place);
+        listOfDestinationsAdapter.notifyDataSetChanged();
 
     }
 
@@ -588,7 +618,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, TaskLoa
             // TODO: Get info about the selected place.
             Log.i(TAG, "Place: " + place.getName() + ", " + place.getId());
             currentPlace = place;
-            add_place.setVisibility(View.VISIBLE);
+            btnAddplace.setVisibility(View.VISIBLE);
             moveToDestination(place);
         }
 

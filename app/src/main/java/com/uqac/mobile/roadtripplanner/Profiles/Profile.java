@@ -156,7 +156,8 @@ public class Profile {
                             Double latitude = (Double)hmStage.get("latitude");
                             String startDateStage = hmStage.get("startDate").toString();
                             Double longitude = (Double)hmStage.get("longitude");
-                            Stage s = new Stage(latitude,longitude,startDateStage,endDateStage);
+                            String name = (String)hmStage.get("name");
+                            Stage s = new Stage(name,latitude,longitude,startDateStage,endDateStage);
                             mt.listStages.add(s);
                         }
                         Profile.this.trips.add(mt);

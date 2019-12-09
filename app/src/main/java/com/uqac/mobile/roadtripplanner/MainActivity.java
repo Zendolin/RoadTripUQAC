@@ -11,6 +11,7 @@ import com.google.android.libraries.places.api.model.Place;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.uqac.mobile.roadtripplanner.Adapters.PlacesAdapter;
+import com.uqac.mobile.roadtripplanner.Helpers.TaskLoadedCallback;
 import com.uqac.mobile.roadtripplanner.Login.LoginActivity;
 import com.uqac.mobile.roadtripplanner.Maps.CustomPlace;
 import com.uqac.mobile.roadtripplanner.Profiles.Profile;
@@ -35,22 +36,7 @@ public class MainActivity extends AppCompatActivity {
     static String TAG = "----------RoadTrip Planner-------------";
     public Profile profile;
     public AppBarConfiguration mAppBarConfiguration;
-    public ListView listViewPlaces;
-    public PlacesAdapter listOfDestinationsAdapter;
-    public ArrayList<Place> places = new ArrayList<>();
-    public static final ArrayList<CustomPlace> customPlaces = new ArrayList<CustomPlace>() {{
-        add(new CustomPlace("ChIJxV_wEQXq9EcRBeX_IoA7ni8", 1));  // 98 Rue Pierre Delore
-        add(new CustomPlace("ChIJw2ApS2Lq9EcR2JcI3dAd_Z0", 4));  // La Part-Dieu
-        add(new CustomPlace("ChIJ63wTk7Tr9EcRj8YR3uS-ipI", 3));  // Gare Perrache
-        add(new CustomPlace("ChIJ7f6Dys7r9EcRI-pprZzom-8", 2));  // Confluence
-        add(new CustomPlace("ChIJs1rce1Pq9EcRRyCL9YWTnV0", 5));  // Place Bellecour
-        add(new CustomPlace("ChIJK1Jxdanr9EcRKY5nG3nMG50", 6));  // La Basilique Notre Dame de Fourvière
-        add(new CustomPlace("ChIJ73nFsh7r9EcRrdSxtummQq0", 7));  // La Croix-Rousse
-        add(new CustomPlace("ChIJueG9dwLr9EcRwxc0xFwTgoU", 8));  // Amphithéatre des trois Gaules
-        add(new CustomPlace("ChIJ2Vs5bH3p9EcRC8vPyuGlX7s", 9));  // Aquarium of Lyon
 
-        //add(new CustomPlace("ChIJD7fiBh9u5kcRYJSMaMOCCwQ"));   // Paris
-    }};
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -119,10 +105,10 @@ public class MainActivity extends AppCompatActivity {
 
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
-
+        /*
         listViewPlaces = findViewById(R.id.places);
         listOfDestinationsAdapter = new PlacesAdapter(this, places);
-        listViewPlaces.setAdapter(listOfDestinationsAdapter);
+        listViewPlaces.setAdapter(listOfDestinationsAdapter);*/
         drawer.closeDrawer(GravityCompat.START);
         toolbar.setTitle("RoadTrip Planner");
     }
