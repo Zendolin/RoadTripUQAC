@@ -44,7 +44,7 @@
             android:orientation="horizontal"
             app:layout_constraintBottom_toTopOf="@+id/bottomBar_fragment"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="@id/appBarLayout" />
 
         <fragment
             android:id="@+id/bottomBar_fragment"

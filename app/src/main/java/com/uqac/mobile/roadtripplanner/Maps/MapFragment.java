@@ -16,17 +16,14 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.view.inputmethod.EditorInfo;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.api.Status;
@@ -56,6 +53,7 @@ import com.google.android.libraries.places.api.net.FetchPlaceRequest;
 import com.google.android.libraries.places.api.net.FetchPlaceResponse;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.uqac.mobile.roadtripplanner.Adapters.PlacesAdapter;
+import com.uqac.mobile.roadtripplanner.Calendar.Calendar.CalendarFragment;
 import com.uqac.mobile.roadtripplanner.Helpers.FetchURL;
 import com.uqac.mobile.roadtripplanner.Helpers.TaskLoadedCallback;
 import com.uqac.mobile.roadtripplanner.MainActivity;
@@ -67,9 +65,9 @@ import com.uqac.mobile.roadtripplanner.Stage;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
@@ -78,6 +76,7 @@ import static com.uqac.mobile.roadtripplanner.Maps.DestinationMatrixTask.SEPARAT
 public class MapFragment extends Fragment implements OnMapReadyCallback, TaskLoadedCallback, DestinationMatrixCallback, GoogleApiClient.OnConnectionFailedListener {
 
     private static final String TAG = "MapFragment";
+    CalendarFragment calendarFragment;
     View view;
     private GoogleMap mMap;
     private boolean mLocationPermissionGranted = false;
@@ -98,7 +97,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, TaskLoa
     ImageView imageSave;
     ImageView imageStart;
     ImageView btnAddplace;
-
+    Bundle bundle;
 
     ArrayList<LatLng> points;
     public ListView listViewPlaces;
@@ -491,6 +490,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, TaskLoa
                     try {
                         MyTrip trip = new MyTrip(profile.uid,edittext.getText().toString(),"","","0",new ArrayList(),false);
                         //TODO Dates
+
                         for(Place p : places)
                         {
                             LatLng l = p.getLatLng();
@@ -498,6 +498,15 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, TaskLoa
                             trip.listStages.add(st);
                         }
                         profile.trips.add(trip);
+                        bundle = new Bundle();
+                        bundle.putBoolean("firstTime", true);
+                        CalendarFragment calFrag = new CalendarFragment();
+                        calFrag.setArguments(bundle);
+                        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+                        fragmentTransaction.replace(R.id.ContentLayout, calFrag);
+                        fragmentTransaction.addToBackStack(null);
+                        fragmentTransaction.commit();
+
                         profile.SaveProfile();
                         Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Location saved !", Toast.LENGTH_LONG);
                         toast.show();
