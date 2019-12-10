@@ -186,7 +186,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, TaskLoa
 
         getLocationPermission();
         profile = ((MainActivity)getActivity()).profile;
+
+        listViewPlaces = getActivity().findViewById(R.id.places);
         listOfDestinationsAdapter = new PlacesAdapter(getActivity(), places);
+        listViewPlaces.setAdapter(listOfDestinationsAdapter);
+
         return view;
     }
 
