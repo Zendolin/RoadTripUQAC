@@ -324,7 +324,6 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
             String location = cur.getString(EVENT_LOCATION);
 
             Event event = new Event(eventID, calID, title, location, beginVal, endVal);
-            Toast.makeText(context, "EVENT_TITLE", Toast.LENGTH_SHORT).show();
             events.add(event);
         }
 
