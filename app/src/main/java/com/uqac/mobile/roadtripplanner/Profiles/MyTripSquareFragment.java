@@ -1,13 +1,17 @@
 package com.uqac.mobile.roadtripplanner.Profiles;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -41,6 +45,41 @@ public class MyTripSquareFragment extends Fragment  implements OnMapReadyCallbac
         likeImage = view.findViewById(R.id.myTripSquare_LikeImage);
         lockImage = view.findViewById(R.id.myTripSquare_LockImage);
         likeText = view.findViewById(R.id.myTripSquare_LikeScore);
+
+
+        view.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v)
+            {
+                if(owner.uid.equals(userProfile.uid))
+                {
+                    AlertDialog.Builder alertDiag = new AlertDialog.Builder(getActivity());
+                    alertDiag.setMessage("Dou you want to delete this trip ?");
+                    alertDiag.setTitle("Delete Trip");
+                    alertDiag.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            try {
+                                owner.trips.remove(index);
+                                owner.SaveProfile();
+                                getActivity().getSupportFragmentManager().beginTransaction().remove(MyTripSquareFragment.this).commit();
+                            } catch (Exception e) {
+                            }
+                        }
+                    });
+                    alertDiag.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                        }
+                    });
+
+                    AlertDialog dialog = alertDiag.create();
+                    dialog.show();
+
+                }
+                return false;
+            }
+        });
+
+
         return view;
     }
 

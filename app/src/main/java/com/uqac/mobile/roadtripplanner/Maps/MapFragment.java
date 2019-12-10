@@ -103,19 +103,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, TaskLoa
     public ListView listViewPlaces;
     public PlacesAdapter listOfDestinationsAdapter;
     public ArrayList<Place> places = new ArrayList<>();
-    public static final ArrayList<CustomPlace> customPlaces = new ArrayList<CustomPlace>() {{
-        add(new CustomPlace("ChIJxV_wEQXq9EcRBeX_IoA7ni8", 1));  // 98 Rue Pierre Delore
-        add(new CustomPlace("ChIJw2ApS2Lq9EcR2JcI3dAd_Z0", 4));  // La Part-Dieu
-        add(new CustomPlace("ChIJ63wTk7Tr9EcRj8YR3uS-ipI", 3));  // Gare Perrache
-        add(new CustomPlace("ChIJ7f6Dys7r9EcRI-pprZzom-8", 2));  // Confluence
-        add(new CustomPlace("ChIJs1rce1Pq9EcRRyCL9YWTnV0", 5));  // Place Bellecour
-        add(new CustomPlace("ChIJK1Jxdanr9EcRKY5nG3nMG50", 6));  // La Basilique Notre Dame de Fourvière
-        add(new CustomPlace("ChIJ73nFsh7r9EcRrdSxtummQq0", 7));  // La Croix-Rousse
-        add(new CustomPlace("ChIJueG9dwLr9EcRwxc0xFwTgoU", 8));  // Amphithéatre des trois Gaules
-        add(new CustomPlace("ChIJ2Vs5bH3p9EcRC8vPyuGlX7s", 9));  // Aquarium of Lyon
 
-        //add(new CustomPlace("ChIJD7fiBh9u5kcRYJSMaMOCCwQ"));   // Paris
-    }};
     private Place currentPlace = null;
 
     //tests -----------------
@@ -186,6 +174,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, TaskLoa
 
             }
         });
+
 
         String apiKey = getString(R.string.google_maps_key);
 
@@ -483,11 +472,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, TaskLoa
             AlertDialog.Builder alertDiag = new AlertDialog.Builder(getActivity());
             final EditText edittext = new EditText(getActivity());
             alertDiag.setMessage("Choose a name for your trip");
-            alertDiag.setTitle("Save a Trip");
-            alertDiag.setView(edittext);
-            alertDiag.setPositiveButton("Save", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
-                    try {
+                        alertDiag.setTitle("Save a Trip");
+                        alertDiag.setView(edittext);
+                        alertDiag.setPositiveButton("Save", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                try {
                         MyTrip trip = new MyTrip(profile.uid,edittext.getText().toString(),"","","0",new ArrayList(),false);
                         //TODO Dates
 
