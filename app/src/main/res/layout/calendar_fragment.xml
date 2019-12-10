@@ -24,7 +24,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
-                android:text="Ajouter événement" />
+                android:text="Add Event" />
 
             <Button
                 android:id="@+id/show"
@@ -59,7 +59,7 @@
                 android:id="@+id/addCalendar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Ajouter Calendrier" />
+                android:text="Add Calendar" />
 
         </LinearLayout>
 
