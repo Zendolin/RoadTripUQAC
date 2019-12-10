@@ -152,9 +152,14 @@ public class ActionEvent extends Fragment implements View.OnClickListener{
 
                     }
                     profile.SaveProfile();
+                   Bundle bundle = new Bundle() ;
+                    bundle.putBoolean("firstTime",false);
+                    bundle.putLong("CalId",event.getCalendar_ID());
+                    CalendarFragment calFrag = new CalendarFragment();
+                    calFrag.setArguments(bundle);
                     FragmentManager manager = getFragmentManager();
                     FragmentTransaction transaction = manager.beginTransaction();
-                    transaction.replace(R.id.ContentLayout, new CalendarFragment(), "Calendar_Fragment");
+                    transaction.replace(R.id.ContentLayout, calFrag, "Calendar_Fragment");
                     transaction.commit();
 
                 }

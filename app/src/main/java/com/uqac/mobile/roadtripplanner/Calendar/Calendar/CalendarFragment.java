@@ -84,8 +84,9 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
         profile = ((MainActivity)getActivity()).profile;
 
         if(bundle != null){
+            firstTime = bundle.getBoolean("firstTime");
             if(firstTime){
-             firstTime = bundle.getBoolean("firstTime");
+
             addCalendar(profile.trips.get(profile.trips.size()-1).tripName);
             edittext.setText(getCalendarDispName(profile.trips.get(profile.trips.size() - 1).tripName)+"");
             Calendar cal = Calendar.getInstance();
@@ -97,6 +98,8 @@ public class CalendarFragment extends Fragment implements View.OnClickListener, 
                 cal1.add(DAY_OF_MONTH,1);
             }
             firstTime = false;
+            }else{
+                edittext.setText(bundle.getLong("CalId")+"");
             }
         }
 
