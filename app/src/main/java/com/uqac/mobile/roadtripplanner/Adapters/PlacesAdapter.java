@@ -78,7 +78,7 @@ public class PlacesAdapter extends BaseAdapter {
         convertView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(context, "onClick : " + place.getName(), Toast.LENGTH_SHORT).show();
+                //Toast.makeText(context, "onClick : " + place.getName(), Toast.LENGTH_SHORT).show();
             }
         });
 
